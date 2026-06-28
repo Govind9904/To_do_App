@@ -9,8 +9,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import TaskModal from "../../components/TaskModal";
 import { tasks } from "../data/task";
-import TaskModal from "./modal";
 
 export default function Home() {
   const [taskList, setTaskList] = useState(tasks);
@@ -372,8 +372,9 @@ const styles = StyleSheet.create({
 
   fab: {
     position: "absolute",
-    right: 22,
-    bottom: 30,
+    left: "50%",
+    transform: [{ translateX: -31 }], // half of width (62/2)
+    bottom: 5,
     width: 62,
     height: 62,
     borderRadius: 31,
