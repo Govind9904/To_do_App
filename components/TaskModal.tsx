@@ -2,14 +2,14 @@ import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useState } from "react";
 import {
-    Modal,
-    Platform,
-    Pressable,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Modal,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export type Task = {
@@ -26,17 +26,11 @@ type Props = {
   onAddTask: (task: Task) => void;
 };
 
-export default function TaskModal({
-  visible,
-  onClose,
-  onAddTask,
-}: Props) {
+export default function TaskModal({ visible, onClose, onAddTask }: Props) {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(new Date());
   const [showDate, setShowDate] = useState(false);
-  const [priority, setPriority] = useState<
-    "High" | "Medium" | "Low"
-  >("Medium");
+  const [priority, setPriority] = useState<"High" | "Medium" | "Low">("Medium");
 
   const resetForm = () => {
     setTitle("");
@@ -76,35 +70,22 @@ export default function TaskModal({
       onRequestClose={handleClose}
     >
       <View style={styles.wrapper}>
-        <Pressable
-          style={styles.overlay}
-          onPress={handleClose}
-        />
+        <Pressable style={styles.overlay} onPress={handleClose} />
 
         <View style={styles.sheet}>
           {/* Header */}
 
           <View style={styles.header}>
-            <Text style={styles.heading}>
-              Add New Task
-            </Text>
+            <Text style={styles.heading}>Add New Task</Text>
 
-            <TouchableOpacity
-              onPress={handleClose}
-            >
-              <Ionicons
-                name="close"
-                size={26}
-                color="#444"
-              />
+            <TouchableOpacity onPress={handleClose}>
+              <Ionicons name="close" size={26} color="#444" />
             </TouchableOpacity>
           </View>
 
           {/* Title */}
 
-          <Text style={styles.label}>
-            Task Title
-          </Text>
+          <Text style={styles.label}>Task Title</Text>
 
           <TextInput
             placeholder="Enter task title"
@@ -115,23 +96,18 @@ export default function TaskModal({
 
           {/* Date */}
 
-          <Text style={styles.label}>
-            Due Date
-          </Text>
+          <Text style={styles.label}>Due Date</Text>
 
           <TouchableOpacity
             style={styles.input}
             onPress={() => setShowDate(true)}
           >
             <Text style={styles.dateText}>
-              {date.toLocaleDateString(
-                "en-GB",
-                {
-                  day: "2-digit",
-                  month: "long",
-                  year: "numeric",
-                }
-              )}
+              {date.toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              })}
             </Text>
           </TouchableOpacity>
 
@@ -139,15 +115,8 @@ export default function TaskModal({
             <DateTimePicker
               value={date}
               mode="date"
-              display={
-                Platform.OS === "ios"
-                  ? "spinner"
-                  : "default"
-              }
-              onChange={(
-                event,
-                selectedDate
-              ) => {
+              display={Platform.OS === "ios" ? "spinner" : "default"}
+              onChange={(event, selectedDate) => {
                 setShowDate(false);
 
                 if (selectedDate) {
@@ -159,34 +128,22 @@ export default function TaskModal({
 
           {/* Priority */}
 
-          <Text style={styles.label}>
-            Priority
-          </Text>
+          <Text style={styles.label}>Priority</Text>
 
           <View style={styles.priorityRow}>
-            {(
-              [
-                "High",
-                "Medium",
-                "Low",
-              ] as const
-            ).map((item) => (
+            {(["High", "Medium", "Low"] as const).map((item) => (
               <TouchableOpacity
                 key={item}
-                onPress={() =>
-                  setPriority(item)
-                }
+                onPress={() => setPriority(item)}
                 style={[
                   styles.priorityButton,
-                  priority === item &&
-                    styles.activePriority,
+                  priority === item && styles.activePriority,
                 ]}
               >
                 <Text
                   style={[
                     styles.priorityText,
-                    priority === item &&
-                      styles.activePriorityText,
+                    priority === item && styles.activePriorityText,
                   ]}
                 >
                   {item}
@@ -197,13 +154,8 @@ export default function TaskModal({
 
           {/* Button */}
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleAdd}
-          >
-            <Text style={styles.buttonText}>
-              Add Task
-            </Text>
+          <TouchableOpacity style={styles.button} onPress={handleAdd}>
+            <Text style={styles.buttonText}>Add Task</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -219,8 +171,7 @@ const styles = StyleSheet.create({
 
   overlay: {
     flex: 1,
-    backgroundColor:
-      "rgba(0,0,0,0.35)",
+    backgroundColor: "rgba(0,0,0,0.35)",
   },
 
   sheet: {

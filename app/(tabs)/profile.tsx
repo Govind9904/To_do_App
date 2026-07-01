@@ -1,8 +1,8 @@
+import { useTask } from "@/context/TaskContext";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
   Image,
-  ScrollView,
   StyleSheet,
   Switch,
   Text,
@@ -13,6 +13,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Profile() {
   const [darkMode, setDarkMode] = React.useState(false);
+
+  const { taskList } = useTask();
+
+  const totalTask = taskList.length;
+  const completedTask = taskList.filter((task) => task.completed).length;
+  const pendingTask = totalTask - completedTask;
 
   const MenuItem = ({
     icon,
@@ -34,106 +40,67 @@ export default function Profile() {
         <Text style={styles.menuText}>{title}</Text>
       </View>
 
-      {right ?? (
-        <Ionicons
-          name="chevron-forward"
-          size={20}
-          color="#999"
-        />
-      )}
+      {right ?? <Ionicons name="chevron-forward" size={20} color="#999" />}
     </TouchableOpacity>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Profile Card */}
+      {/* Profile Card */}
 
-        <View style={styles.profileCard}>
-          <Image
-            source={{
-              uri: "https://i.pravatar.cc/200?img=12",
-            }}
-            style={styles.avatar}
-          />
+      <View style={styles.profileCard}>
+        <Image
+          source={{
+            uri: "https://i.pravatar.cc/200?img=12",
+          }}
+          style={styles.avatar}
+        />
 
-          <Text style={styles.name}>Govind Prajapati</Text>
+        <Text style={styles.name}>Govind Prajapati</Text>
 
-          <Text style={styles.email}>
-            govind@example.com
-          </Text>
+        <Text style={styles.email}>govind@example.com</Text>
+      </View>
+
+      {/* Statistics */}
+
+      <View style={styles.statsRow}>
+        <View style={styles.statCard}>
+          <Text style={styles.statValue}>{totalTask}</Text>
+          <Text style={styles.statTitle}>Tasks</Text>
         </View>
 
-        {/* Statistics */}
-
-        <View style={styles.statsRow}>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>42</Text>
-            <Text style={styles.statTitle}>Tasks</Text>
-          </View>
-
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>28</Text>
-            <Text style={styles.statTitle}>Completed</Text>
-          </View>
-
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>14</Text>
-            <Text style={styles.statTitle}>Pending</Text>
-          </View>
+        <View style={styles.statCard}>
+          <Text style={styles.statValue}>{completedTask}</Text>
+          <Text style={styles.statTitle}>Completed</Text>
         </View>
 
-        {/* Settings */}
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Settings</Text>
-
-          <MenuItem
-            icon="person-outline"
-            title="Edit Profile"
-          />
-
-          <MenuItem
-            icon="moon-outline"
-            title="Dark Mode"
-            right={
-              <Switch
-                value={darkMode}
-                onValueChange={setDarkMode}
-              />
-            }
-          />
-
-          <MenuItem
-            icon="notifications-outline"
-            title="Notifications"
-          />
-
-          <MenuItem
-            icon="lock-closed-outline"
-            title="Privacy"
-          />
-
-          <MenuItem
-            icon="help-circle-outline"
-            title="Help"
-          />
+        <View style={styles.statCard}>
+          <Text style={styles.statValue}>{pendingTask}</Text>
+          <Text style={styles.statTitle}>Pending</Text>
         </View>
+      </View>
 
-        {/* Logout */}
+      {/* Settings */}
 
-        <TouchableOpacity style={styles.logout}>
-          <Ionicons
-            name="log-out-outline"
-            size={20}
-            color="#fff"
-          />
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Settings</Text>
 
-          <Text style={styles.logoutText}>
-            Logout
-          </Text>
-        </TouchableOpacity>
-      </ScrollView>
+        <MenuItem
+          icon="moon-outline"
+          title="Dark Mode"
+          right={<Switch value={darkMode} onValueChange={setDarkMode} />}
+        />
+
+        <MenuItem icon="notifications-outline" title="Notifications" />
+      </View>
+
+      {/* Logout */}
+
+      <TouchableOpacity style={styles.logout}>
+        <Ionicons name="log-out-outline" size={20} color="#fff" />
+
+        <Text style={styles.logoutText}>Logout</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }

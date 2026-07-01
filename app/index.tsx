@@ -1,5 +1,5 @@
-import GetStarterScreen from "./screens/GetStarterScreen";
+import LoginScreen from "./screens/authScreen/LoginScreen";
 
 export default function Index() {
-  return <GetStarterScreen />;
+  return <LoginScreen />;
 }

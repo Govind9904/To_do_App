@@ -1,3 +1,5 @@
+import AddTaskButton from "@/components/AddTaskButton";
+import { useTask } from "@/context/TaskContext";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
@@ -10,10 +12,9 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TaskModal from "../../components/TaskModal";
-import { tasks } from "../data/task";
 
 export default function Home() {
-  const [taskList, setTaskList] = useState(tasks);
+  const { taskList, setTaskList } = useTask();
   const [modalVisible, setModalVisible] = useState(false);
 
   const today = new Date();
@@ -152,7 +153,7 @@ export default function Home() {
                   {task.title}
                 </Text>
 
-                <Text style={styles.taskTime}>{task.time}</Text>
+                <Text style={styles.taskTime}>{task.date}</Text>
               </TouchableOpacity>
             </View>
           ))}
@@ -161,12 +162,7 @@ export default function Home() {
 
       {/* FLOATING BUTTON */}
 
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => setModalVisible(true)}
-      >
-        <Ionicons name="add" size={30} color="#fff" />
-      </TouchableOpacity>
+      <AddTaskButton onPress={() => setModalVisible(true)} />
 
       <TaskModal
         visible={modalVisible}
@@ -181,11 +177,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F7F8F3",
+    paddingHorizontal: 18,
+    paddingTop: 10,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 18,
-    paddingTop: 10,
   },
 
   header: {
