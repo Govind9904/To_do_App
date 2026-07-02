@@ -13,30 +13,12 @@ import AddTaskButton from "@/components/AddTaskButton";
 import { useTask } from "@/context/TaskContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TaskCard from "../../components/TaskCard";
-<<<<<<< HEAD
-import TaskModal from "../../components/TaskModal";
-
-export type Task = {
-  id: number;
-  title: string;
-  date: string;
-  completed: boolean;
-  priority: "High" | "Medium" | "Low";
-};
-
-export default function Tasks() {
-  const { taskList, setTaskList } = useTask();
-
-  const [search, setSearch] = useState("");
-
-=======
 import TaskModal, { TaskPayload } from "../../components/TaskModal";
 
 export default function Tasks() {
   const { taskList, fetchTasks, createTask } = useTask();
 
   const [search, setSearch] = useState("");
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
   const [filter, setFilter] = useState<"All" | "Pending" | "Completed">("All");
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -70,30 +52,12 @@ export default function Tasks() {
     return data;
   }, [taskList, search, filter]);
 
-<<<<<<< HEAD
-  const toggleTask = (id: number) => {
-    setTaskList((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              completed: !item.completed,
-            }
-          : item,
-      ),
-    );
-  };
-
-  const addTask = (task: any) => {
-    setTaskList((prev) => [...prev, task]);
-=======
   // ❌ IMPORTANT: toggle should be API-based (if backend supports it)
   // If you don't have API yet, keep this commented
   const toggleTask = async (id: string) => {
     console.log("Toggle should call API here:", id);
     // later: await updateTask(id)
     // then: fetchTasks()
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
   };
 
   return (
@@ -110,10 +74,6 @@ export default function Tasks() {
       {/* SEARCH */}
       <View style={styles.searchContainer}>
         <Ionicons name="search-outline" size={20} color="#888" />
-<<<<<<< HEAD
-
-=======
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
         <TextInput
           placeholder="Search tasks..."
           value={search}
@@ -146,24 +106,12 @@ export default function Tasks() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}
         renderItem={({ item }) => (
-<<<<<<< HEAD
-          <TaskCard task={item} onToggle={() => toggleTask(item.id)} />
-        )}
-      />
-
-      {/* FAB */}
-
-      <AddTaskButton onPress={() => setModalVisible(true)} />
-
-      {/* MODAL */}
-=======
           <TaskCard task={item} onToggle={() => toggleTask(item._id)} />
         )}
       />
 
       {/* FLOATING BUTTON */}
       <AddTaskButton onPress={() => setModalVisible(true)} />
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
 
       {/* MODAL (NOW CALLS API THROUGH CONTEXT) */}
       <TaskModal

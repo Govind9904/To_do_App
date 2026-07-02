@@ -11,19 +11,12 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-<<<<<<< HEAD
-import TaskModal from "../../components/TaskModal";
-
-export default function Home() {
-  const { taskList, setTaskList } = useTask();
-=======
 import TaskModal, { TaskPayload } from "../../components/TaskModal";
 
 export default function Home() {
   const { taskList, fetchTasks, createTask, loading, status, error } =
     useTask();
 
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
@@ -172,15 +165,8 @@ export default function Home() {
                     { backgroundColor: getPriorityColor(task.priority) },
                   ]}
                 >
-<<<<<<< HEAD
-                  {task.title}
-                </Text>
-
-                <Text style={styles.taskTime}>{task.date}</Text>
-=======
                   <Text style={styles.priorityText}>{task.priority}</Text>
                 </View>
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
               </TouchableOpacity>
             ))
           )}
@@ -190,12 +176,7 @@ export default function Home() {
       {/* FLOATING BUTTON */}
       <AddTaskButton onPress={() => setModalVisible(true)} />
 
-<<<<<<< HEAD
-      <AddTaskButton onPress={() => setModalVisible(true)} />
-
-=======
       {/* MODAL */}
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
       <TaskModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
@@ -219,10 +200,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F7F8F3",
     paddingHorizontal: 18,
-<<<<<<< HEAD
-    paddingTop: 10,
-=======
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
   },
 
   content: {

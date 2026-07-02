@@ -3,10 +3,6 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useState } from "react";
 import {
   Modal,
-<<<<<<< HEAD
-  Platform,
-=======
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
   Pressable,
   StyleSheet,
   Text,
@@ -30,20 +26,13 @@ type Props = {
 };
 
 export default function TaskModal({ visible, onClose, onAddTask }: Props) {
-<<<<<<< HEAD
-=======
   // ✅ FIXED: missing states added
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("Study");
 
   const [date, setDate] = useState(new Date());
   const [showDate, setShowDate] = useState(false);
-<<<<<<< HEAD
-=======
-
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
   const [priority, setPriority] = useState<"High" | "Medium" | "Low">("Medium");
 
   const resetForm = () => {
@@ -84,25 +73,14 @@ export default function TaskModal({ visible, onClose, onAddTask }: Props) {
         <View style={styles.sheet}>
           {/* Header */}
           <View style={styles.header}>
-<<<<<<< HEAD
-            <Text style={styles.heading}>Add New Task</Text>
-
-=======
             <Text style={styles.heading}>Create Task</Text>
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
             <TouchableOpacity onPress={handleClose}>
               <Ionicons name="close" size={26} color="#444" />
             </TouchableOpacity>
           </View>
 
           {/* Title */}
-<<<<<<< HEAD
-
-          <Text style={styles.label}>Task Title</Text>
-
-=======
           <Text style={styles.label}>Title</Text>
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
           <TextInput
             value={title}
             onChangeText={setTitle}
@@ -120,9 +98,6 @@ export default function TaskModal({ visible, onClose, onAddTask }: Props) {
             multiline
           />
 
-<<<<<<< HEAD
-          <Text style={styles.label}>Due Date</Text>
-=======
           {/* Category */}
           <Text style={styles.label}>Category</Text>
           <TextInput
@@ -131,7 +106,6 @@ export default function TaskModal({ visible, onClose, onAddTask }: Props) {
             placeholder="Study / Work / Personal"
             style={styles.input}
           />
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
 
           {/* Due Date */}
           <Text style={styles.label}>Due Date</Text>
@@ -139,29 +113,14 @@ export default function TaskModal({ visible, onClose, onAddTask }: Props) {
             style={styles.input}
             onPress={() => setShowDate(true)}
           >
-<<<<<<< HEAD
-            <Text style={styles.dateText}>
-              {date.toLocaleDateString("en-GB", {
-                day: "2-digit",
-                month: "long",
-                year: "numeric",
-              })}
-            </Text>
-=======
             <Text>{date.toDateString()}</Text>
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
           </TouchableOpacity>
 
           {showDate && (
             <DateTimePicker
               value={date}
               mode="date"
-<<<<<<< HEAD
-              display={Platform.OS === "ios" ? "spinner" : "default"}
-              onChange={(event, selectedDate) => {
-=======
               onChange={(e, selectedDate) => {
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
                 setShowDate(false);
                 if (selectedDate) setDate(selectedDate);
               }}
@@ -169,13 +128,7 @@ export default function TaskModal({ visible, onClose, onAddTask }: Props) {
           )}
 
           {/* Priority */}
-<<<<<<< HEAD
-
           <Text style={styles.label}>Priority</Text>
-
-=======
-          <Text style={styles.label}>Priority</Text>
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
           <View style={styles.priorityRow}>
             {(["High", "Medium", "Low"] as const).map((item) => (
               <TouchableOpacity
@@ -198,16 +151,9 @@ export default function TaskModal({ visible, onClose, onAddTask }: Props) {
             ))}
           </View>
 
-<<<<<<< HEAD
-          {/* Button */}
-
-          <TouchableOpacity style={styles.button} onPress={handleAdd}>
-            <Text style={styles.buttonText}>Add Task</Text>
-=======
           {/* Submit */}
           <TouchableOpacity style={styles.button} onPress={handleAdd}>
             <Text style={styles.buttonText}>Create Task</Text>
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
           </TouchableOpacity>
         </View>
       </View>
@@ -216,21 +162,8 @@ export default function TaskModal({ visible, onClose, onAddTask }: Props) {
 }
 
 const styles = StyleSheet.create({
-<<<<<<< HEAD
-  wrapper: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.35)",
-  },
-
-=======
   wrapper: { flex: 1, justifyContent: "flex-end" },
   overlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.35)" },
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
   sheet: {
     backgroundColor: "#fff",
     borderTopLeftRadius: 28,
@@ -270,14 +203,5 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
   },
-<<<<<<< HEAD
-
-  buttonText: {
-    color: "#fff",
-    fontSize: 17,
-    fontWeight: "700",
-  },
-=======
   buttonText: { color: "#fff", fontWeight: "700" },
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
 });

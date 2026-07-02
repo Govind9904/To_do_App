@@ -3,10 +3,6 @@ import axios from "axios";
 
 const API = axios.create({
   baseURL: "https://backend-itha.onrender.com/api",
-<<<<<<< HEAD
-  timeout: 10000,
-=======
->>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
   headers: {
     "Content-Type": "application/json",
   },
