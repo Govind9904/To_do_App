@@ -1,5 +1,6 @@
 import { useTask } from "@/context/TaskContext";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React from "react";
 import {
   Image,
@@ -96,7 +97,14 @@ export default function Profile() {
 
       {/* Logout */}
 
+<<<<<<< HEAD
       <TouchableOpacity style={styles.logout}>
+=======
+      <TouchableOpacity
+        style={styles.logout}
+        onPress={() => router.replace("/screens/authScreen/LoginScreen")}
+      >
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
         <Ionicons name="log-out-outline" size={20} color="#fff" />
 
         <Text style={styles.logoutText}>Logout</Text>

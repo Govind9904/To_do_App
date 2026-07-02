@@ -1,6 +1,10 @@
 import { loginUser } from "@/api/authApi";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+<<<<<<< HEAD
+=======
+import { router } from "expo-router";
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
 import React, { useState } from "react";
 import {
     ActivityIndicator,
@@ -13,7 +17,11 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+<<<<<<< HEAD
 export default function LoginScreen() {
+=======
+export default function LoginScreen({ navigation }: any) {
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -43,7 +51,11 @@ export default function LoginScreen() {
       await AsyncStorage.setItem("token", res.token);
       await AsyncStorage.setItem("userName", res.name);
 
+<<<<<<< HEAD
       //   navigation.replace("/(tabs)/home");
+=======
+      router.replace("/(tabs)/home");
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
     } catch (err: any) {
       Alert.alert("Login Failed", err?.message || "Invalid email or password.");
     } finally {
@@ -114,11 +126,21 @@ export default function LoginScreen() {
         </TouchableOpacity>
       </View>
 
+<<<<<<< HEAD
       {/* <TouchableOpacity onPress={() => navigation.navigate("Register")}>
         <Text style={styles.bottomText}>
           Don't have an account? <Text style={styles.signup}>Sign Up</Text>
         </Text>
       </TouchableOpacity> */}
+=======
+      <TouchableOpacity
+        onPress={() => router.replace("/screens/authScreen/RegisterScree")}
+      >
+        <Text style={styles.bottomText}>
+          Don't have an account? <Text style={styles.signup}>Sign Up</Text>
+        </Text>
+      </TouchableOpacity>
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
     </SafeAreaView>
   );
 }

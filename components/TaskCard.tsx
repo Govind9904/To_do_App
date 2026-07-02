@@ -1,22 +1,22 @@
+import { Task } from "@/types/task";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import {
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
-import type { Task } from "../app/(tabs)/tasks";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type Props = {
   task: Task;
   onToggle: () => void;
 };
 
-export default function TaskCard({
-  task,
-  onToggle,
-}: Props) {
+const formatDate = (date?: string) => {
+  if (!date) return "No due date";
+  return new Date(date).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+  });
+};
+
+export default function TaskCard({ task, onToggle }: Props) {
   const badgeStyle = () => {
     if (task.completed) {
       return {
@@ -63,41 +63,21 @@ export default function TaskCard({
       <View style={styles.left}>
         <TouchableOpacity onPress={onToggle}>
           <Ionicons
-            name={
-              task.completed
-                ? "checkmark-circle"
-                : "ellipse-outline"
-            }
+            name={task.completed ? "checkmark-circle" : "ellipse-outline"}
             size={26}
-            color={
-              task.completed
-                ? "#3D8B55"
-                : "#8CBF9A"
-            }
+            color={task.completed ? "#3D8B55" : "#8CBF9A"}
           />
         </TouchableOpacity>
 
         <View style={styles.textContainer}>
-          <Text
-            style={[
-              styles.title,
-              task.completed &&
-                styles.completedTitle,
-            ]}
-          >
+          <Text style={[styles.title, task.completed && styles.completedTitle]}>
             {task.title}
           </Text>
 
           <View style={styles.dateRow}>
-            <Ionicons
-              name="calendar-outline"
-              size={14}
-              color="#999"
-            />
+            <Ionicons name="calendar-outline" size={14} color="#999" />
 
-            <Text style={styles.date}>
-              {task.date}
-            </Text>
+            <Text style={styles.date}>{formatDate(task.dueDate)}</Text>
           </View>
         </View>
       </View>
@@ -108,8 +88,7 @@ export default function TaskCard({
         style={[
           styles.badge,
           {
-            backgroundColor:
-              badge.backgroundColor,
+            backgroundColor: badge.backgroundColor,
           },
         ]}
       >

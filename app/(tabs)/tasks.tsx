@@ -13,6 +13,7 @@ import AddTaskButton from "@/components/AddTaskButton";
 import { useTask } from "@/context/TaskContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TaskCard from "../../components/TaskCard";
+<<<<<<< HEAD
 import TaskModal from "../../components/TaskModal";
 
 export type Task = {
@@ -28,10 +29,27 @@ export default function Tasks() {
 
   const [search, setSearch] = useState("");
 
+=======
+import TaskModal, { TaskPayload } from "../../components/TaskModal";
+
+export default function Tasks() {
+  const { taskList, fetchTasks, createTask } = useTask();
+
+  const [search, setSearch] = useState("");
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
   const [filter, setFilter] = useState<"All" | "Pending" | "Completed">("All");
 
   const [modalVisible, setModalVisible] = useState(false);
 
+  const formatDate = (date?: string) => {
+    if (!date) return "No due date";
+    return new Date(date).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+    });
+  };
+
+  // FILTERED DATA (pure UI logic only)
   const filteredTasks = useMemo(() => {
     let data = [...taskList];
 
@@ -52,6 +70,7 @@ export default function Tasks() {
     return data;
   }, [taskList, search, filter]);
 
+<<<<<<< HEAD
   const toggleTask = (id: number) => {
     setTaskList((prev) =>
       prev.map((item) =>
@@ -67,12 +86,19 @@ export default function Tasks() {
 
   const addTask = (task: any) => {
     setTaskList((prev) => [...prev, task]);
+=======
+  // ❌ IMPORTANT: toggle should be API-based (if backend supports it)
+  // If you don't have API yet, keep this commented
+  const toggleTask = async (id: string) => {
+    console.log("Toggle should call API here:", id);
+    // later: await updateTask(id)
+    // then: fetchTasks()
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
   };
 
   return (
     <SafeAreaView style={styles.container}>
       {/* HEADER */}
-
       <View style={styles.header}>
         <Text style={styles.heading}>Tasks</Text>
 
@@ -82,10 +108,12 @@ export default function Tasks() {
       </View>
 
       {/* SEARCH */}
-
       <View style={styles.searchContainer}>
         <Ionicons name="search-outline" size={20} color="#888" />
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
         <TextInput
           placeholder="Search tasks..."
           value={search}
@@ -95,7 +123,6 @@ export default function Tasks() {
       </View>
 
       {/* FILTER */}
-
       <View style={styles.tabs}>
         {["All", "Pending", "Completed"].map((item) => (
           <TouchableOpacity
@@ -113,15 +140,13 @@ export default function Tasks() {
       </View>
 
       {/* LIST */}
-
       <FlatList
         data={filteredTasks}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: 120,
-        }}
+        contentContainerStyle={{ paddingBottom: 120 }}
         renderItem={({ item }) => (
+<<<<<<< HEAD
           <TaskCard task={item} onToggle={() => toggleTask(item.id)} />
         )}
       />
@@ -131,16 +156,28 @@ export default function Tasks() {
       <AddTaskButton onPress={() => setModalVisible(true)} />
 
       {/* MODAL */}
+=======
+          <TaskCard task={item} onToggle={() => toggleTask(item._id)} />
+        )}
+      />
 
+      {/* FLOATING BUTTON */}
+      <AddTaskButton onPress={() => setModalVisible(true)} />
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
+
+      {/* MODAL (NOW CALLS API THROUGH CONTEXT) */}
       <TaskModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        onAddTask={addTask}
+        onAddTask={async (task: TaskPayload) => {
+          await createTask(task); // ✅ API CALL
+          fetchTasks(); // refresh list
+          setModalVisible(false);
+        }}
       />
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

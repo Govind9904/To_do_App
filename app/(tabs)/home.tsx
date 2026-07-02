@@ -1,7 +1,7 @@
 import AddTaskButton from "@/components/AddTaskButton";
 import { useTask } from "@/context/TaskContext";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   ScrollView,
@@ -11,85 +11,112 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+<<<<<<< HEAD
 import TaskModal from "../../components/TaskModal";
 
 export default function Home() {
   const { taskList, setTaskList } = useTask();
+=======
+import TaskModal, { TaskPayload } from "../../components/TaskModal";
+
+export default function Home() {
+  const { taskList, fetchTasks, createTask, loading, status, error } =
+    useTask();
+
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
   const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
 
   const today = new Date();
 
-  const dateString = today.toLocaleDateString("en-GB", {
+  const formattedDate = today.toLocaleDateString("en-GB", {
     day: "numeric",
     month: "long",
     year: "numeric",
-  });
-
-  const weekdayName = today.toLocaleDateString("en-GB", {
     weekday: "long",
   });
 
-  const formattedDateTime = `${dateString}, ${weekdayName}`;
-
   const totalTask = taskList.length;
-
-  const completedTask = taskList.filter((task) => task.completed).length;
-
+  const completedTask = taskList.filter((t) => t.completed).length;
   const pendingTask = totalTask - completedTask;
 
-  const progressRate = Math.round((completedTask / totalTask) * 100);
+  const progressRate =
+    totalTask === 0 ? 0 : Math.round((completedTask / totalTask) * 100);
 
-  const toggleTask = (id: number) => {
-    setTaskList((prev) => {
-      return prev.map((task) => {
-        return task.id === id ? { ...task, completed: !task.completed } : task;
-      });
+  const formatDate = (date?: string) => {
+    if (!date) return "No due date";
+    return new Date(date).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
     });
   };
 
-  const addTask = (task: any) => {
-    setTaskList((prev) => [...prev, task]);
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case "High":
+        return "#E53935";
+      case "Medium":
+        return "#FB8C00";
+      case "Low":
+        return "#43A047";
+      default:
+        return "#999";
+    }
   };
+
+  // UI STATES
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={{ marginTop: 50 }}>Loading tasks...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={{ color: "red", marginTop: 50 }}>
+          {error || "Something went wrong"}
+        </Text>
+
+        <TouchableOpacity onPress={fetchTasks}>
+          <Text style={{ marginTop: 20, color: "#3D8B55" }}>Retry</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         {/* HEADER */}
-
         <View style={styles.header}>
           <View>
             <Text style={styles.greeting}>Good Morning,</Text>
-
-            <Text style={styles.name}>
-              Admin <Text style={styles.wave}>☀️</Text>
-            </Text>
-
-            <View style={styles.dateRow}>
-              <Ionicons name="calendar-outline" size={15} color="#6B7280" />
-
-              <Text style={styles.date}>{formattedDateTime}</Text>
-            </View>
+            <Text style={styles.name}>Admin ☀️</Text>
+            <Text style={styles.date}>{formattedDate}</Text>
           </View>
 
           <Image
-            source={{
-              uri: "https://i.pravatar.cc/150?img=12",
-            }}
+            source={{ uri: "https://i.pravatar.cc/150?img=12" }}
             style={styles.avatar}
           />
         </View>
 
-        {/* STATISTICS */}
-
+        {/* STATS */}
         <View style={styles.cardRow}>
           <View style={styles.card}>
             <Text style={styles.cardValue}>{totalTask}</Text>
-            <Text style={styles.cardTitle}>Total Tasks</Text>
+            <Text style={styles.cardTitle}>Total</Text>
           </View>
 
           <View style={styles.card}>
             <Text style={styles.cardValue}>{completedTask}</Text>
-            <Text style={styles.cardTitle}>Completed</Text>
+            <Text style={styles.cardTitle}>Done</Text>
           </View>
 
           <View style={styles.card}>
@@ -99,75 +126,89 @@ export default function Home() {
         </View>
 
         {/* PROGRESS */}
-
         <View style={styles.progressCard}>
-          <View style={styles.progressHeader}>
-            <Text style={styles.progressTitle}>Great Progress!</Text>
-
-            <Text style={styles.progressPercent}>{progressRate}%</Text>
-          </View>
+          <Text style={styles.progressText}>{progressRate}% Completed</Text>
 
           <View style={styles.progressBar}>
             <View
-              style={[
-                styles.progressFill,
-                {
-                  width: `${progressRate}%`,
-                },
-              ]}
+              style={[styles.progressFill, { width: `${progressRate}%` }]}
             />
           </View>
-
-          <Text style={styles.progressText}>
-            {completedTask} of {totalTask} tasks completed
-          </Text>
         </View>
 
-        {/* TODAY TASKS */}
-
+        {/* TASK LIST */}
         <ScrollView style={styles.taskContainer}>
-          <View style={styles.taskHeader}>
-            <Text style={styles.taskHeading}>Today's Tasks</Text>
+          <Text style={styles.sectionTitle}>Tasks</Text>
 
-            <TouchableOpacity>
-              <Text style={styles.viewAll}>View All</Text>
-            </TouchableOpacity>
-          </View>
-          {taskList.map((task) => (
-            <View key={task.id}>
-              <TouchableOpacity
-                onPress={() => toggleTask(task.id)}
-                style={styles.taskItem}
-              >
+          {taskList.length === 0 ? (
+            <Text style={{ marginTop: 20, color: "#888" }}>No tasks found</Text>
+          ) : (
+            taskList.map((task) => (
+              <TouchableOpacity key={task._id} style={styles.taskItem}>
                 <Ionicons
                   name={task.completed ? "checkmark-circle" : "ellipse-outline"}
                   size={22}
-                  color={task.completed ? "#4CAF50" : "#999"}
+                  color={task.completed ? "#3D8B55" : "#999"}
                 />
-                <Text
+
+                <View style={{ flex: 1, marginLeft: 10 }}>
+                  <Text
+                    style={[
+                      styles.taskTitle,
+                      task.completed && styles.completed,
+                    ]}
+                  >
+                    {task.title}
+                  </Text>
+
+                  <Text style={styles.taskMeta}>
+                    {task.category} • {formatDate(task.dueDate)}
+                  </Text>
+                </View>
+
+                <View
                   style={[
-                    styles.taskName,
-                    task.completed && styles.completedTask,
+                    styles.priorityBadge,
+                    { backgroundColor: getPriorityColor(task.priority) },
                   ]}
                 >
+<<<<<<< HEAD
                   {task.title}
                 </Text>
 
                 <Text style={styles.taskTime}>{task.date}</Text>
+=======
+                  <Text style={styles.priorityText}>{task.priority}</Text>
+                </View>
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
               </TouchableOpacity>
-            </View>
-          ))}
+            ))
+          )}
         </ScrollView>
       </View>
 
       {/* FLOATING BUTTON */}
-
       <AddTaskButton onPress={() => setModalVisible(true)} />
 
+<<<<<<< HEAD
+      <AddTaskButton onPress={() => setModalVisible(true)} />
+
+=======
+      {/* MODAL */}
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
       <TaskModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        onAddTask={addTask}
+        onAddTask={async (task: TaskPayload) => {
+          // ✅ create task in backend
+          await createTask(task);
+
+          // ✅ refresh list
+          fetchTasks();
+
+          // ✅ close modal
+          setModalVisible(false);
+        }}
       />
     </SafeAreaView>
   );
@@ -178,8 +219,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F7F8F3",
     paddingHorizontal: 18,
+<<<<<<< HEAD
     paddingTop: 10,
+=======
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
   },
+
   content: {
     flex: 1,
   },
@@ -187,205 +232,137 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: 10,
     alignItems: "center",
-    marginBottom: 25,
   },
 
   greeting: {
-    fontSize: 18,
-    color: "#8B8B8B",
+    fontSize: 14,
+    color: "#777",
   },
 
   name: {
-    fontSize: 34,
+    fontSize: 26,
     fontWeight: "700",
     color: "#1F5E46",
-    marginTop: 4,
-  },
-
-  wave: {
-    fontSize: 28,
-  },
-
-  avatar: {
-    width: 55,
-    height: 55,
-    borderRadius: 30,
-    borderWidth: 2,
-    borderColor: "#3D8B55",
-  },
-
-  dateRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 8,
   },
 
   date: {
-    marginLeft: 6,
+    marginTop: 4,
     color: "#666",
-    fontSize: 14,
-    fontWeight: "500",
+    fontSize: 13,
+  },
+
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
   },
 
   cardRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 40,
-    marginBottom: 40,
+    marginVertical: 20,
   },
 
   card: {
-    width: "31%",
+    flex: 1,
     backgroundColor: "#fff",
-    borderRadius: 18,
-    paddingVertical: 20,
+    paddingVertical: 14,
+    marginHorizontal: 4,
+    borderRadius: 14,
     alignItems: "center",
-
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-
-    elevation: 5,
+    elevation: 2,
   },
 
   cardValue: {
-    fontSize: 28,
+    fontSize: 20,
     fontWeight: "700",
     color: "#1F5E46",
   },
 
   cardTitle: {
-    fontSize: 13,
-    color: "#888",
-    marginTop: 6,
+    fontSize: 12,
+    color: "#777",
+    marginTop: 2,
   },
 
   progressCard: {
     backgroundColor: "#fff",
-    borderRadius: 18,
-    padding: 18,
-    marginBottom: 20,
-
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-
-  progressHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    padding: 14,
+    borderRadius: 14,
     marginBottom: 14,
+    elevation: 1,
   },
 
-  progressTitle: {
+  progressText: {
+    marginBottom: 8,
     fontWeight: "600",
-    fontSize: 16,
-    color: "#555",
-  },
-
-  progressPercent: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#2E8B57",
+    fontSize: 13,
   },
 
   progressBar: {
-    width: "100%",
-    height: 10,
-    backgroundColor: "#ECECEC",
+    height: 8,
+    backgroundColor: "#eee",
     borderRadius: 10,
     overflow: "hidden",
   },
 
   progressFill: {
-    width: "67%",
     height: "100%",
     backgroundColor: "#3D8B55",
     borderRadius: 10,
   },
 
-  progressText: {
-    marginTop: 10,
-    color: "#777",
-    fontSize: 13,
-  },
-
   taskContainer: {
+    flex: 1,
     backgroundColor: "#fff",
-    borderRadius: 18,
-    padding: 18,
-
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 4,
+    borderRadius: 14,
+    padding: 14,
   },
 
-  taskHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 18,
-  },
-
-  taskHeading: {
-    fontSize: 19,
+  sectionTitle: {
+    fontSize: 17,
     fontWeight: "700",
-    color: "#333",
-  },
-
-  viewAll: {
-    color: "#888",
-    fontWeight: "600",
+    marginBottom: 10,
+    color: "#222",
   },
 
   taskItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 14,
+    paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#F1F1F1",
+    borderBottomColor: "#F0F0F0",
   },
 
-  taskName: {
-    flex: 1,
-    marginLeft: 12,
-    fontSize: 16,
-    color: "#444",
-    fontWeight: "500",
-  },
-
-  taskTime: {
-    color: "#888",
+  taskTitle: {
     fontSize: 14,
+    fontWeight: "600",
+    color: "#222",
   },
 
-  fab: {
-    position: "absolute",
-    left: "50%",
-    transform: [{ translateX: -31 }], // half of width (62/2)
-    bottom: 5,
-    width: 62,
-    height: 62,
-    borderRadius: 31,
-    backgroundColor: "#3D8B55",
-    justifyContent: "center",
-    alignItems: "center",
-
-    shadowColor: "#000",
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 8,
+  taskMeta: {
+    fontSize: 12,
+    color: "#777",
+    marginTop: 2,
   },
 
-  completedTask: {
+  completed: {
     textDecorationLine: "line-through",
     color: "#999",
+  },
+
+  priorityBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    marginLeft: 8,
+  },
+
+  priorityText: {
+    color: "#fff",
+    fontSize: 10,
+    fontWeight: "600",
   },
 });

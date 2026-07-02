@@ -3,7 +3,10 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useState } from "react";
 import {
   Modal,
+<<<<<<< HEAD
   Platform,
+=======
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
   Pressable,
   StyleSheet,
   Text,
@@ -12,28 +15,41 @@ import {
   View,
 } from "react-native";
 
-export type Task = {
-  id: number;
+export type TaskPayload = {
   title: string;
-  date: string;
-  completed: boolean;
+  description: string;
   priority: "High" | "Medium" | "Low";
+  category: string;
+  dueDate: string;
 };
 
 type Props = {
   visible: boolean;
   onClose: () => void;
-  onAddTask: (task: Task) => void;
+  onAddTask: (task: TaskPayload) => void;
 };
 
 export default function TaskModal({ visible, onClose, onAddTask }: Props) {
+<<<<<<< HEAD
+=======
+  // ✅ FIXED: missing states added
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("Study");
+
   const [date, setDate] = useState(new Date());
   const [showDate, setShowDate] = useState(false);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
   const [priority, setPriority] = useState<"High" | "Medium" | "Low">("Medium");
 
   const resetForm = () => {
     setTitle("");
+    setDescription("");
+    setCategory("Study");
     setDate(new Date());
     setPriority("Medium");
   };
@@ -46,62 +62,84 @@ export default function TaskModal({ visible, onClose, onAddTask }: Props) {
   const handleAdd = () => {
     if (!title.trim()) return;
 
-    onAddTask({
-      id: Date.now(),
+    const task: TaskPayload = {
       title,
-      date: date.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-      }),
-      completed: false,
+      description,
+      category,
       priority,
-    });
+      dueDate: date.toISOString().split("T")[0], // YYYY-MM-DD
+    };
+
+    onAddTask(task);
 
     resetForm();
     onClose();
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={handleClose}
-    >
+    <Modal visible={visible} transparent animationType="slide">
       <View style={styles.wrapper}>
         <Pressable style={styles.overlay} onPress={handleClose} />
 
         <View style={styles.sheet}>
           {/* Header */}
-
           <View style={styles.header}>
+<<<<<<< HEAD
             <Text style={styles.heading}>Add New Task</Text>
 
+=======
+            <Text style={styles.heading}>Create Task</Text>
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
             <TouchableOpacity onPress={handleClose}>
               <Ionicons name="close" size={26} color="#444" />
             </TouchableOpacity>
           </View>
 
           {/* Title */}
+<<<<<<< HEAD
 
           <Text style={styles.label}>Task Title</Text>
 
+=======
+          <Text style={styles.label}>Title</Text>
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
           <TextInput
-            placeholder="Enter task title"
             value={title}
             onChangeText={setTitle}
+            placeholder="Enter title"
             style={styles.input}
           />
 
-          {/* Date */}
+          {/* Description */}
+          <Text style={styles.label}>Description</Text>
+          <TextInput
+            value={description}
+            onChangeText={setDescription}
+            placeholder="Enter description"
+            style={[styles.input, { height: 80 }]}
+            multiline
+          />
 
+<<<<<<< HEAD
           <Text style={styles.label}>Due Date</Text>
+=======
+          {/* Category */}
+          <Text style={styles.label}>Category</Text>
+          <TextInput
+            value={category}
+            onChangeText={setCategory}
+            placeholder="Study / Work / Personal"
+            style={styles.input}
+          />
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
 
+          {/* Due Date */}
+          <Text style={styles.label}>Due Date</Text>
           <TouchableOpacity
             style={styles.input}
             onPress={() => setShowDate(true)}
           >
+<<<<<<< HEAD
             <Text style={styles.dateText}>
               {date.toLocaleDateString("en-GB", {
                 day: "2-digit",
@@ -109,27 +147,35 @@ export default function TaskModal({ visible, onClose, onAddTask }: Props) {
                 year: "numeric",
               })}
             </Text>
+=======
+            <Text>{date.toDateString()}</Text>
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
           </TouchableOpacity>
 
           {showDate && (
             <DateTimePicker
               value={date}
               mode="date"
+<<<<<<< HEAD
               display={Platform.OS === "ios" ? "spinner" : "default"}
               onChange={(event, selectedDate) => {
+=======
+              onChange={(e, selectedDate) => {
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
                 setShowDate(false);
-
-                if (selectedDate) {
-                  setDate(selectedDate);
-                }
+                if (selectedDate) setDate(selectedDate);
               }}
             />
           )}
 
           {/* Priority */}
+<<<<<<< HEAD
 
           <Text style={styles.label}>Priority</Text>
 
+=======
+          <Text style={styles.label}>Priority</Text>
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
           <View style={styles.priorityRow}>
             {(["High", "Medium", "Low"] as const).map((item) => (
               <TouchableOpacity
@@ -152,10 +198,16 @@ export default function TaskModal({ visible, onClose, onAddTask }: Props) {
             ))}
           </View>
 
+<<<<<<< HEAD
           {/* Button */}
 
           <TouchableOpacity style={styles.button} onPress={handleAdd}>
             <Text style={styles.buttonText}>Add Task</Text>
+=======
+          {/* Submit */}
+          <TouchableOpacity style={styles.button} onPress={handleAdd}>
+            <Text style={styles.buttonText}>Create Task</Text>
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
           </TouchableOpacity>
         </View>
       </View>
@@ -164,6 +216,7 @@ export default function TaskModal({ visible, onClose, onAddTask }: Props) {
 }
 
 const styles = StyleSheet.create({
+<<<<<<< HEAD
   wrapper: {
     flex: 1,
     justifyContent: "flex-end",
@@ -174,90 +227,57 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.35)",
   },
 
+=======
+  wrapper: { flex: 1, justifyContent: "flex-end" },
+  overlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.35)" },
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
   sheet: {
     backgroundColor: "#fff",
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     padding: 22,
   },
-
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 25,
+    marginBottom: 20,
   },
-
-  heading: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#222",
-  },
-
-  label: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#444",
-    marginBottom: 8,
-    marginTop: 8,
-  },
-
+  heading: { fontSize: 20, fontWeight: "700" },
+  label: { marginTop: 10, fontWeight: "600" },
   input: {
-    height: 52,
     borderWidth: 1,
-    borderColor: "#E2E2E2",
-    borderRadius: 14,
-    paddingHorizontal: 15,
-    justifyContent: "center",
-    fontSize: 16,
-    marginBottom: 16,
+    borderColor: "#ddd",
+    padding: 12,
+    borderRadius: 10,
+    marginTop: 5,
   },
-
-  dateText: {
-    fontSize: 16,
-    color: "#333",
-  },
-
-  priorityRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 30,
-  },
-
+  priorityRow: { flexDirection: "row", marginTop: 10 },
   priorityButton: {
     flex: 1,
-    height: 46,
-    borderRadius: 12,
-    backgroundColor: "#F4F4F4",
-    justifyContent: "center",
+    padding: 10,
+    margin: 4,
+    backgroundColor: "#eee",
+    borderRadius: 8,
     alignItems: "center",
-    marginHorizontal: 5,
   },
-
-  activePriority: {
-    backgroundColor: "#3D8B55",
-  },
-
-  priorityText: {
-    color: "#555",
-    fontWeight: "600",
-  },
-
-  activePriorityText: {
-    color: "#fff",
-  },
-
+  activePriority: { backgroundColor: "#3D8B55" },
+  priorityText: { color: "#333" },
+  activePriorityText: { color: "#fff" },
   button: {
-    height: 55,
+    marginTop: 20,
     backgroundColor: "#3D8B55",
-    borderRadius: 14,
-    justifyContent: "center",
+    padding: 15,
+    borderRadius: 12,
     alignItems: "center",
   },
+<<<<<<< HEAD
 
   buttonText: {
     color: "#fff",
     fontSize: 17,
     fontWeight: "700",
   },
+=======
+  buttonText: { color: "#fff", fontWeight: "700" },
+>>>>>>> 1715a49 (Add taskContext , integrate API for Get or Add Task)
 });
