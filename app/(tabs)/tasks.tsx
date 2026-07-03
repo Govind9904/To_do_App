@@ -31,6 +31,16 @@ export default function Tasks() {
     });
   };
 
+  const handleDelete = async (id: any) => {
+    // Delete API
+  };
+
+  const handleEdit = (id: any) => {
+    // Open edit modal
+    // setSelectedTask(task);
+    // setEditModalVisible(true);
+  };
+
   // FILTERED DATA (pure UI logic only)
   const filteredTasks = useMemo(() => {
     let data = [...taskList];
@@ -106,7 +116,12 @@ export default function Tasks() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}
         renderItem={({ item }) => (
-          <TaskCard task={item} onToggle={() => toggleTask(item._id)} />
+          <TaskCard
+            task={item}
+            onToggle={() => toggleTask(item._id)}
+            onDelete={() => handleDelete(item._id)}
+            onEdit={() => handleEdit(item._id)}
+          />
         )}
       />
 

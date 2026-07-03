@@ -2,10 +2,13 @@ import { Task } from "@/types/task";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 
 type Props = {
   task: Task;
   onToggle: () => void;
+  onDelete: () => void;
+  onEdit: () => void;
 };
 
 const formatDate = (date?: string) => {
@@ -16,7 +19,27 @@ const formatDate = (date?: string) => {
   });
 };
 
-export default function TaskCard({ task, onToggle }: Props) {
+export default function TaskCard({ task, onToggle, onDelete, onEdit }: Props) {
+  const RightActions = () => {
+    return (
+      <View style={styles.rightActions}>
+        <TouchableOpacity
+          style={[styles.actionButton, styles.editButton]}
+          onPress={onEdit}
+        >
+          <Ionicons name="create-outline" size={20} color="#fff" />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.actionButton, styles.deleteButton]}
+          onPress={onDelete}
+        >
+          <Ionicons name="trash-outline" size={20} color="#fff" />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   const badgeStyle = () => {
     if (task.completed) {
       return {
@@ -53,57 +76,64 @@ export default function TaskCard({ task, onToggle }: Props) {
   const badge = badgeStyle();
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.85}
-      style={styles.card}
-      onPress={onToggle}
+    <ReanimatedSwipeable
+      renderRightActions={() => <RightActions />}
+      overshootRight={false}
     >
-      {/* Left */}
+      <TouchableOpacity
+        activeOpacity={0.85}
+        style={styles.card}
+        onPress={onToggle}
+      >
+        {/* Left */}
 
-      <View style={styles.left}>
-        <TouchableOpacity onPress={onToggle}>
-          <Ionicons
-            name={task.completed ? "checkmark-circle" : "ellipse-outline"}
-            size={26}
-            color={task.completed ? "#3D8B55" : "#8CBF9A"}
-          />
-        </TouchableOpacity>
+        <View style={styles.left}>
+          <TouchableOpacity onPress={onToggle}>
+            <Ionicons
+              name={task.completed ? "checkmark-circle" : "ellipse-outline"}
+              size={26}
+              color={task.completed ? "#3D8B55" : "#8CBF9A"}
+            />
+          </TouchableOpacity>
 
-        <View style={styles.textContainer}>
-          <Text style={[styles.title, task.completed && styles.completedTitle]}>
-            {task.title}
-          </Text>
+          <View style={styles.textContainer}>
+            <Text
+              style={[styles.title, task.completed && styles.completedTitle]}
+            >
+              {task.title}
+            </Text>
 
-          <View style={styles.dateRow}>
-            <Ionicons name="calendar-outline" size={14} color="#999" />
+            <View style={styles.dateRow}>
+              <Ionicons name="calendar-outline" size={14} color="#999" />
 
-            <Text style={styles.date}>{formatDate(task.dueDate)}</Text>
+              <Text style={styles.date}>{formatDate(task.dueDate)}</Text>
+            </View>
           </View>
         </View>
-      </View>
 
-      {/* Right */}
+        {/* Right */}
 
-      <View
-        style={[
-          styles.badge,
-          {
-            backgroundColor: badge.backgroundColor,
-          },
-        ]}
-      >
-        <Text
+        <View
           style={[
-            styles.badgeText,
+            styles.badge,
             {
-              color: badge.color,
+              backgroundColor: badge.backgroundColor,
             },
           ]}
         >
-          {badge.text}
-        </Text>
-      </View>
-    </TouchableOpacity>
+          <Text
+            style={[
+              styles.badgeText,
+              {
+                color: badge.color,
+              },
+            ]}
+          >
+            {badge.text}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    </ReanimatedSwipeable>
   );
 }
 
@@ -174,5 +204,28 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: 13,
     fontWeight: "700",
+  },
+  rightActions: {
+    flexDirection: "row",
+    marginBottom: 15,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  actionButton: {
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 18,
+    marginLeft: 8,
+  },
+
+  editButton: {
+    backgroundColor: "#4CAF50",
+  },
+
+  deleteButton: {
+    backgroundColor: "#E53935",
   },
 });
