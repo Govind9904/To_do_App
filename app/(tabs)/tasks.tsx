@@ -11,15 +11,18 @@ import {
 
 import AddTaskButton from "@/components/AddTaskButton";
 import { useTask } from "@/context/TaskContext";
+import { Task } from "@/types/task";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TaskCard from "../../components/TaskCard";
-import TaskModal, { TaskPayload } from "../../components/TaskModal";
+import TaskModal from "../../components/TaskModal";
 
 export default function Tasks() {
-  const { taskList, fetchTasks, createTask } = useTask();
+  const { taskList, fetchTasks, createTask ,updateTask, deleteTask} = useTask();
 
+  const [mode, setMode] = useState<"create" | "edit" | "view">("create");
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"All" | "Pending" | "Completed">("All");
+  const [selectedTask,setSelectedTask] = useState<Task | null>(null);
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -32,13 +35,17 @@ export default function Tasks() {
   };
 
   const handleDelete = async (id: any) => {
-    // Delete API
+    console.log("Delete Id :-",id)
+    await deleteTask(id);
+    await fetchTasks();
   };
 
-  const handleEdit = (id: any) => {
+  const handleEdit = (id: string, task : any) => {
     // Open edit modal
-    // setSelectedTask(task);
-    // setEditModalVisible(true);
+    setMode("edit");
+    setSelectedTask(task);
+    setModalVisible(true);
+    console.log("Edit Id :-",id)
   };
 
   // FILTERED DATA (pure UI logic only)
@@ -62,14 +69,22 @@ export default function Tasks() {
     return data;
   }, [taskList, search, filter]);
 
-  // ❌ IMPORTANT: toggle should be API-based (if backend supports it)
-  // If you don't have API yet, keep this commented
-  const toggleTask = async (id: string) => {
-    console.log("Toggle should call API here:", id);
-    // later: await updateTask(id)
-    // then: fetchTasks()
+  const toggleTask = async (id: string, task: any) => {
+    console.log("Toggle");
+
+    await updateTask(id, {
+      ...task,
+      completed: !task.completed,
+    });
+
+    await fetchTasks();
   };
 
+  const showTaskDetail = (task: Task) => {
+    setMode("view");
+    setSelectedTask(task);
+    setModalVisible(true);
+  };
   return (
     <SafeAreaView style={styles.container}>
       {/* HEADER */}
@@ -118,23 +133,38 @@ export default function Tasks() {
         renderItem={({ item }) => (
           <TaskCard
             task={item}
-            onToggle={() => toggleTask(item._id)}
+            onToggle={() => toggleTask(item._id,item)}
             onDelete={() => handleDelete(item._id)}
-            onEdit={() => handleEdit(item._id)}
+            onEdit={() => handleEdit(item._id,item)}
+            showTaskDetail={showTaskDetail}
           />
         )}
       />
 
       {/* FLOATING BUTTON */}
-      <AddTaskButton onPress={() => setModalVisible(true)} />
+      <AddTaskButton
+  onPress={() => {
+    setMode("create");
+    setSelectedTask(null);
+    setModalVisible(true);
+  }}
+/>
 
       {/* MODAL (NOW CALLS API THROUGH CONTEXT) */}
       <TaskModal
         visible={modalVisible}
+        mode={mode}
         onClose={() => setModalVisible(false)}
-        onAddTask={async (task: TaskPayload) => {
-          await createTask(task); // ✅ API CALL
-          fetchTasks(); // refresh list
+        task={selectedTask}
+        onSubmitTask={async (data) => {
+          if (selectedTask) {
+            await updateTask(selectedTask._id, data);
+          } else {
+            await createTask(data);
+          }
+
+          await fetchTasks();
+          setSelectedTask(null);
           setModalVisible(false);
         }}
       />

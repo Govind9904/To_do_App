@@ -1,4 +1,4 @@
-import { addTask, getTasks } from "@/api/taskApi";
+import { addTask, deleteTask as deleteTaskApi, getTasks, updateTask as updateTaskApi } from "@/api/taskApi";
 import React, { createContext, useContext, useState } from "react";
 import { Task } from "../types/task";
 
@@ -15,6 +15,8 @@ type TaskContentType = {
   setTaskList: React.Dispatch<React.SetStateAction<Task[]>>;
   fetchTasks: () => Promise<void>;
   createTask: (task: TaskPayload) => Promise<void>;
+  updateTask: (id: string, data: Partial<Task>) => Promise<void>;
+  deleteTask: (id: string) => Promise<void>;
   loading: boolean;
   status: "idle" | "success" | "error";
   error: string | null;
@@ -69,6 +71,41 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     }
   };
+
+  const updateTask = async (id: string , data: Partial<Task>) => {
+    try {
+      setLoading(true);
+
+      const updatedTask = await updateTaskApi(id,data);
+
+      setTaskList((prev)=>
+        prev.map((task)=>
+        task._id === id ? updatedTask : task
+        )
+      );
+      setLoading(false);
+    }catch(err:any){
+      console.log("Update Error Task :-",err);
+      setStatus("error");
+      setError(err?.message || "Failed to Update Task");
+    }finally{
+      setLoading(false);
+    }
+  }
+
+  const deleteTask = async (id: string) => {
+  try {
+    setLoading(true);
+    await deleteTaskApi(id);
+    setStatus("success");
+  } catch (err: any) {
+    console.log("Delete Task Error:", err);
+    setStatus("error");
+    setError(err || "Failed to Delete Task");
+  } finally {
+    setLoading(false);
+  }
+}; 
   return (
     <TaskContext.Provider
       value={{
@@ -76,6 +113,8 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
         setTaskList,
         fetchTasks,
         createTask,
+        updateTask,
+        deleteTask,
         loading,
         status,
         error,

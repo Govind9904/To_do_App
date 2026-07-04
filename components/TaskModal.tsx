@@ -1,6 +1,7 @@
+import { Task } from "@/types/task";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Pressable,
@@ -22,10 +23,12 @@ export type TaskPayload = {
 type Props = {
   visible: boolean;
   onClose: () => void;
-  onAddTask: (task: TaskPayload) => void;
+  onSubmitTask: (task: TaskPayload) => void;
+  task?: Task | null;
+  mode: "create" | "edit" | "view";
 };
 
-export default function TaskModal({ visible, onClose, onAddTask }: Props) {
+export default function TaskModal({ visible, onClose, onSubmitTask, task, mode }: Props) {
   // ✅ FIXED: missing states added
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -48,18 +51,30 @@ export default function TaskModal({ visible, onClose, onAddTask }: Props) {
     onClose();
   };
 
-  const handleAdd = () => {
+  useEffect(() => {
+    if (task) {
+      setTitle(task.title ?? "");
+      setDescription(task.description ?? "");
+      setCategory(task.category ?? "Study");
+      setPriority(task.priority ?? "Medium");
+      setDate(task.dueDate ? new Date(task.dueDate) : new Date());
+    } else {
+      resetForm();
+    }
+  }, [task, visible]);
+
+  const handleSubmit = () => {
     if (!title.trim()) return;
 
-    const task: TaskPayload = {
+    const payload: TaskPayload = {
       title,
       description,
       category,
       priority,
-      dueDate: date.toISOString().split("T")[0], // YYYY-MM-DD
+      dueDate: date.toISOString().split("T")[0],
     };
 
-    onAddTask(task);
+    onSubmitTask(payload);
 
     resetForm();
     onClose();
@@ -73,7 +88,13 @@ export default function TaskModal({ visible, onClose, onAddTask }: Props) {
         <View style={styles.sheet}>
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.heading}>Create Task</Text>
+            <Text style={styles.heading}>
+              {mode === "create"
+                ? "Create Task"
+                : mode === "edit"
+                  ? "Edit Task"
+                  : "Task Details"}
+            </Text>
             <TouchableOpacity onPress={handleClose}>
               <Ionicons name="close" size={26} color="#444" />
             </TouchableOpacity>
@@ -85,6 +106,7 @@ export default function TaskModal({ visible, onClose, onAddTask }: Props) {
             value={title}
             onChangeText={setTitle}
             placeholder="Enter title"
+            editable={mode !== "view"}
             style={styles.input}
           />
 
@@ -94,6 +116,7 @@ export default function TaskModal({ visible, onClose, onAddTask }: Props) {
             value={description}
             onChangeText={setDescription}
             placeholder="Enter description"
+            editable={mode !== "view"}
             style={[styles.input, { height: 80 }]}
             multiline
           />
@@ -104,6 +127,7 @@ export default function TaskModal({ visible, onClose, onAddTask }: Props) {
             value={category}
             onChangeText={setCategory}
             placeholder="Study / Work / Personal"
+            editable={mode !== "view"}
             style={styles.input}
           />
 
@@ -111,6 +135,7 @@ export default function TaskModal({ visible, onClose, onAddTask }: Props) {
           <Text style={styles.label}>Due Date</Text>
           <TouchableOpacity
             style={styles.input}
+            disabled={mode === "view"}
             onPress={() => setShowDate(true)}
           >
             <Text>{date.toDateString()}</Text>
@@ -134,6 +159,7 @@ export default function TaskModal({ visible, onClose, onAddTask }: Props) {
               <TouchableOpacity
                 key={item}
                 onPress={() => setPriority(item)}
+                disabled={mode === "view"}
                 style={[
                   styles.priorityButton,
                   priority === item && styles.activePriority,
@@ -152,9 +178,25 @@ export default function TaskModal({ visible, onClose, onAddTask }: Props) {
           </View>
 
           {/* Submit */}
-          <TouchableOpacity style={styles.button} onPress={handleAdd}>
-            <Text style={styles.buttonText}>Create Task</Text>
-          </TouchableOpacity>
+          {mode === "view" ? (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleClose}
+            >
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleSubmit}
+            >
+              <Text style={styles.buttonText}>
+                {mode === "edit"
+                  ? "Update Task"
+                  : "Create Task"}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </Modal>

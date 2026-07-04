@@ -1,3 +1,4 @@
+
 import { Task } from "@/types/task";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
@@ -9,6 +10,7 @@ type Props = {
   onToggle: () => void;
   onDelete: () => void;
   onEdit: () => void;
+  showTaskDetail : (task : Task) => void;
 };
 
 const formatDate = (date?: string) => {
@@ -19,7 +21,8 @@ const formatDate = (date?: string) => {
   });
 };
 
-export default function TaskCard({ task, onToggle, onDelete, onEdit }: Props) {
+export default function TaskCard({ task, onToggle, onDelete, onEdit , showTaskDetail }: Props) {
+  // const { taskList, fetchTasks, createTask,updateTask, loading, status, error } =useTask();
   const RightActions = () => {
     return (
       <View style={styles.rightActions}>
@@ -27,7 +30,8 @@ export default function TaskCard({ task, onToggle, onDelete, onEdit }: Props) {
           style={[styles.actionButton, styles.editButton]}
           onPress={onEdit}
         >
-          <Ionicons name="create-outline" size={20} color="#fff" />
+          <Ionicons name="create-outline" size={20} color="#fff"
+          />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -83,7 +87,7 @@ export default function TaskCard({ task, onToggle, onDelete, onEdit }: Props) {
       <TouchableOpacity
         activeOpacity={0.85}
         style={styles.card}
-        onPress={onToggle}
+        onPress={() => showTaskDetail(task)}
       >
         {/* Left */}
 

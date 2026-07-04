@@ -1,3 +1,4 @@
+import { updateTask } from "@/api/taskApi";
 import AddTaskButton from "@/components/AddTaskButton";
 import { useTask } from "@/context/TaskContext";
 import { Ionicons } from "@expo/vector-icons";
@@ -14,8 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import TaskModal, { TaskPayload } from "../../components/TaskModal";
 
 export default function Home() {
-  const { taskList, fetchTasks, createTask, loading, status, error } =
-    useTask();
+  const { taskList, fetchTasks, createTask, loading, status, error } =useTask();
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -33,7 +33,7 @@ export default function Home() {
   });
 
   const totalTask = taskList.length;
-  const completedTask = taskList.filter((t) => t.completed).length;
+  const completedTask = taskList.filter((t) => t?.completed).length;
   const pendingTask = totalTask - completedTask;
 
   const progressRate =
@@ -142,6 +142,13 @@ export default function Home() {
                   name={task.completed ? "checkmark-circle" : "ellipse-outline"}
                   size={22}
                   color={task.completed ? "#3D8B55" : "#999"}
+                  onPress={async () => {
+                    await updateTask(task._id, {
+                      completed: !task.completed,
+                    });
+
+                    await fetchTasks();
+                  }}
                 />
 
                 <View style={{ flex: 1, marginLeft: 10 }}>
