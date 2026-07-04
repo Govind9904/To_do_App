@@ -20,3 +20,23 @@ export const deleteTask = async (id: string) => {
   const response = await API.delete(`/tasks/${id}`);
   return response.data;
 };
+
+// Search Task API
+export const searchTasks = async (
+  search: string = "",
+  completed?: boolean,
+): Promise<Task[]> => {
+  const params = new URLSearchParams();
+
+  if (search.trim()) {
+    params.append("search", search);
+  }
+
+  if (completed !== undefined) {
+    params.append("completed", String(completed));
+  }
+
+  const response = await API.get<Task[]>(`/tasks/filter?${params.toString()}`);
+
+  return response.data;
+};

@@ -13,7 +13,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import TaskModal, { TaskPayload } from "../../components/TaskModal";
+import TaskModal from "../../components/TaskModal";
 
 export default function Home() {
   const { taskList, fetchTasks, createTask, loading, status, error } =useTask();
@@ -35,6 +35,8 @@ export default function Home() {
     year: "numeric",
     weekday: "long",
   });
+
+  console.log("TASK LIST", taskList)
 
   const totalTask = taskList.length;
   const completedTask = taskList.filter((t) => t?.completed).length;
@@ -124,11 +126,20 @@ export default function Home() {
 
         {/* PROGRESS */}
         <View style={styles.progressCard}>
-          <Text style={styles.progressText}>{progressRate}% Completed</Text>
+          <View style={styles.progressHeader}>
+            <Text style={styles.progressTitle}>Progress</Text>
+
+            <Text style={styles.progressText}>
+              {progressRate}% Completed
+            </Text>
+          </View>
 
           <View style={styles.progressBar}>
             <View
-              style={[styles.progressFill, { width: `${progressRate}%` }]}
+              style={[
+                styles.progressFill,
+                { width: `${Math.min(progressRate, 100)}%` },
+              ]}
             />
           </View>
         </View>
@@ -192,14 +203,9 @@ export default function Home() {
         visible={modalVisible}
         mode={mode}
         onClose={() => setModalVisible(false)}
-        onAddTask={async (task: TaskPayload) => {
-          // ✅ create task in backend
+        onSubmitTask={async (task) => {
           await createTask(task);
-
-          // ✅ refresh list
-          fetchTasks();
-
-          // ✅ close modal
+          await fetchTasks();   // IMPORTANT await
           setModalVisible(false);
         }}
       />
@@ -223,7 +229,7 @@ const getStyles = (theme: any) =>
     header: {
       flexDirection: "row",
       justifyContent: "space-between",
-      marginTop: 10,
+      marginTop: 15,
       alignItems: "center",
     },
 
@@ -267,45 +273,17 @@ const getStyles = (theme: any) =>
     },
 
     cardValue: {
-      fontSize: 20,
+      fontSize: 40,
       fontWeight: "700",
       color: theme.primary,
     },
 
     cardTitle: {
-      fontSize: 12,
-      color: theme.textSecondary,
-      marginTop: 2,
-    },
-
-    progressCard: {
-      backgroundColor: theme.card,
-      padding: 14,
-      borderRadius: 14,
-      marginBottom: 14,
-      elevation: 1,
-    },
-
-    progressText: {
-      marginBottom: 8,
+      fontSize: 15,
       fontWeight: "600",
-      fontSize: 13,
-      color: theme.text,
+      color: theme.textSecondary,
     },
-
-    progressBar: {
-      height: 8,
-      backgroundColor: theme.border,
-      borderRadius: 10,
-      overflow: "hidden",
-    },
-
-    progressFill: {
-      height: "100%",
-      backgroundColor: theme.primary,
-      borderRadius: 10,
-    },
-
+    
     taskContainer: {
       flex: 1,
       backgroundColor: theme.card,
@@ -356,5 +334,53 @@ const getStyles = (theme: any) =>
       color: "#fff",
       fontSize: 10,
       fontWeight: "600",
+    },
+
+    flex:{
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: 'center'
+    },
+
+    progressCard: {
+      backgroundColor: theme.card,
+      borderRadius: 20,
+      paddingVertical: 22,
+      paddingHorizontal: 20,
+      marginBottom: 18,
+      elevation: 2,
+    },
+
+    progressHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 18,
+    },
+
+    progressTitle: {
+      fontSize: 20,
+      fontWeight: "700",
+      color: theme.text,
+    },
+
+    progressText: {
+      fontSize: 15,
+      fontWeight: "600",
+      color: theme.textSecondary,
+    },
+
+    progressBar: {
+      height: 10,
+      backgroundColor: theme.border,
+      borderRadius: 10,
+      overflow: "hidden",
+    },
+
+    progressFill: {
+      height: "100%",
+      borderRadius: 10,
+      backgroundColor: theme.primary,
     },
   });

@@ -29,6 +29,7 @@ export default function TaskCard({ task, onToggle, onDelete, onEdit , showTaskDe
 
 const { theme } = useTheme();
 const styles = getStyle(theme);
+
   const RightActions = () => {
     return (
       <View style={styles.rightActions}>
@@ -114,8 +115,8 @@ const styles = getStyle(theme);
             </Text>
 
             <View style={styles.dateRow}>
-              <Ionicons name="calendar-outline" size={14} color="#999" />
-
+              
+              <Text style={styles.taskMeta}>{task.category} •</Text>
               <Text style={styles.date}>{formatDate(task.dueDate)}</Text>
             </View>
           </View>
@@ -191,6 +192,11 @@ StyleSheet.create({
     textDecorationLine: "line-through",
     color: theme.textSecondary,
   },
+  taskMeta: {
+      fontSize: 12,
+      color: theme.textSecondary,
+      marginTop: 2,
+    },
 
   dateRow: {
     flexDirection: "row",

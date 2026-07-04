@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
   StyleSheet,
@@ -18,7 +18,7 @@ import TaskCard from "../../components/TaskCard";
 import TaskModal from "../../components/TaskModal";
 
 export default function Tasks() {
-  const { taskList, fetchTasks, createTask, updateTask, deleteTask } = useTask();
+  const { taskList, fetchTasks, createTask, updateTask, deleteTask, searchTask } = useTask();
 
   const [mode, setMode] = useState<"create" | "edit" | "view">("create");
   const [search, setSearch] = useState("");
@@ -27,13 +27,6 @@ export default function Tasks() {
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const formatDate = (date?: string) => {
-    if (!date) return "No due date";
-    return new Date(date).toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "short",
-    });
-  };
 
   const { theme } = useTheme();
   const styles = getStyle(theme);
@@ -52,27 +45,16 @@ export default function Tasks() {
     console.log("Edit Id :-", id)
   };
 
-  // FILTERED DATA (pure UI logic only)
-  const filteredTasks = useMemo(() => {
-    let data = [...taskList];
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      console.log("API Calling")
+      searchTask(search, filter);
+    }, 400);
 
-    if (filter === "Pending") {
-      data = data.filter((item) => !item.completed);
-    }
+    return () => clearTimeout(timer);
+  }, [search, filter]);
 
-    if (filter === "Completed") {
-      data = data.filter((item) => item.completed);
-    }
-
-    if (search.trim()) {
-      data = data.filter((item) =>
-        item.title.toLowerCase().includes(search.toLowerCase()),
-      );
-    }
-
-    return data;
-  }, [taskList, search, filter]);
-
+  console.log("TASK IN TASKS TAB :-",taskList)
   const toggleTask = async (id: string, task: any) => {
     console.log("Toggle");
 
@@ -131,7 +113,7 @@ export default function Tasks() {
 
       {/* LIST */}
       <FlatList
-        data={filteredTasks}
+        data={taskList}
         keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}
@@ -254,5 +236,11 @@ const getStyle = (theme: any) =>
 
     activeTabText: {
       color: "#fff",
+    },
+    
+    taskMeta: {
+      fontSize: 12,
+      color: theme.textSecondary,
+      marginTop: 2,
     },
   });

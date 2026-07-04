@@ -1,4 +1,4 @@
-import { addTask, deleteTask as deleteTaskApi, getTasks, updateTask as updateTaskApi } from "@/api/taskApi";
+import { addTask, deleteTask as deleteTaskApi, getTasks, searchTasks, updateTask as updateTaskApi } from "@/api/taskApi";
 import React, { createContext, useContext, useState } from "react";
 import { Task } from "../types/task";
 
@@ -17,6 +17,10 @@ type TaskContentType = {
   createTask: (task: TaskPayload) => Promise<void>;
   updateTask: (id: string, data: Partial<Task>) => Promise<void>;
   deleteTask: (id: string) => Promise<void>;
+  searchTask: (
+    search: string,
+    filter: "All" | "Pending" | "Completed"
+  ) => Promise<void>;
   loading: boolean;
   status: "idle" | "success" | "error";
   error: string | null;
@@ -39,6 +43,8 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
       setError(null);
 
       const response = await getTasks();
+
+      console.log("Response in Get Task Api",response)
 
       setTaskList(response);
       setStatus("success");
@@ -94,18 +100,35 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
   }
 
   const deleteTask = async (id: string) => {
-  try {
-    setLoading(true);
-    await deleteTaskApi(id);
-    setStatus("success");
-  } catch (err: any) {
-    console.log("Delete Task Error:", err);
-    setStatus("error");
-    setError(err || "Failed to Delete Task");
-  } finally {
-    setLoading(false);
-  }
-}; 
+    try {
+      setLoading(true);
+      await deleteTaskApi(id);
+      setStatus("success");
+    } catch (err: any) {
+      console.log("Delete Task Error:", err);
+      setStatus("error");
+      setError(err || "Failed to Delete Task");
+    } finally {
+      setLoading(false);
+    }
+  }; 
+
+  const searchTask = async (
+    search: string,
+    filter: "All" | "Pending" | "Completed") => {
+    try {
+      let completed: boolean | undefined;
+
+      if (filter === "Pending") completed = false;
+      if (filter === "Completed") completed = true;
+
+      const response = await searchTasks(search, completed);
+      console.log("Full Response",response)
+      setTaskList(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <TaskContext.Provider
       value={{
@@ -115,6 +138,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
         createTask,
         updateTask,
         deleteTask,
+        searchTask,
         loading,
         status,
         error,
