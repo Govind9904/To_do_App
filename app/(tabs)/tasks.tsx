@@ -11,18 +11,19 @@ import {
 
 import AddTaskButton from "@/components/AddTaskButton";
 import { useTask } from "@/context/TaskContext";
+import { useTheme } from "@/context/ThemeContext";
 import { Task } from "@/types/task";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TaskCard from "../../components/TaskCard";
 import TaskModal from "../../components/TaskModal";
 
 export default function Tasks() {
-  const { taskList, fetchTasks, createTask ,updateTask, deleteTask} = useTask();
+  const { taskList, fetchTasks, createTask, updateTask, deleteTask } = useTask();
 
   const [mode, setMode] = useState<"create" | "edit" | "view">("create");
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"All" | "Pending" | "Completed">("All");
-  const [selectedTask,setSelectedTask] = useState<Task | null>(null);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -34,18 +35,21 @@ export default function Tasks() {
     });
   };
 
+  const { theme } = useTheme();
+  const styles = getStyle(theme);
+
   const handleDelete = async (id: any) => {
-    console.log("Delete Id :-",id)
+    console.log("Delete Id :-", id)
     await deleteTask(id);
     await fetchTasks();
   };
 
-  const handleEdit = (id: string, task : any) => {
+  const handleEdit = (id: string, task: any) => {
     // Open edit modal
     setMode("edit");
     setSelectedTask(task);
     setModalVisible(true);
-    console.log("Edit Id :-",id)
+    console.log("Edit Id :-", id)
   };
 
   // FILTERED DATA (pure UI logic only)
@@ -104,6 +108,7 @@ export default function Tasks() {
           value={search}
           onChangeText={setSearch}
           style={styles.searchInput}
+          placeholderTextColor={theme.textSecondary}
         />
       </View>
 
@@ -133,9 +138,9 @@ export default function Tasks() {
         renderItem={({ item }) => (
           <TaskCard
             task={item}
-            onToggle={() => toggleTask(item._id,item)}
+            onToggle={() => toggleTask(item._id, item)}
             onDelete={() => handleDelete(item._id)}
-            onEdit={() => handleEdit(item._id,item)}
+            onEdit={() => handleEdit(item._id, item)}
             showTaskDetail={showTaskDetail}
           />
         )}
@@ -143,12 +148,12 @@ export default function Tasks() {
 
       {/* FLOATING BUTTON */}
       <AddTaskButton
-  onPress={() => {
-    setMode("create");
-    setSelectedTask(null);
-    setModalVisible(true);
-  }}
-/>
+        onPress={() => {
+          setMode("create");
+          setSelectedTask(null);
+          setModalVisible(true);
+        }}
+      />
 
       {/* MODAL (NOW CALLS API THROUGH CONTEXT) */}
       <TaskModal
@@ -171,80 +176,83 @@ export default function Tasks() {
     </SafeAreaView>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F7F8F3",
-    paddingHorizontal: 18,
-    paddingTop: 10,
-  },
 
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 20,
-  },
+const getStyle = (theme: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+      paddingHorizontal: 18,
+      paddingTop: 10,
+    },
 
-  heading: {
-    fontSize: 34,
-    fontWeight: "700",
-    color: "#222",
-  },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 20,
+    },
 
-  filterButton: {
-    width: 42,
-    height: 42,
-    borderRadius: 12,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 2,
-  },
+    heading: {
+      fontSize: 34,
+      fontWeight: "700",
+      color: theme.text,
+    },
 
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 14,
-    paddingHorizontal: 15,
-    height: 52,
-    marginBottom: 18,
-    elevation: 2,
-  },
+    filterButton: {
+      width: 42,
+      height: 42,
+      borderRadius: 12,
+      backgroundColor: theme.card,
+      justifyContent: "center",
+      alignItems: "center",
+      elevation: 2,
+    },
 
-  searchInput: {
-    flex: 1,
-    marginLeft: 10,
-    fontSize: 16,
-  },
+    searchContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: theme.card,
+      borderRadius: 14,
+      paddingHorizontal: 15,
+      height: 52,
+      marginBottom: 18,
+      elevation: 2,
+    },
 
-  tabs: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
-  },
+    searchInput: {
+      flex: 1,
+      marginLeft: 10,
+      fontSize: 16,
+      color: theme.text
+    },
 
-  tab: {
-    flex: 1,
-    height: 44,
-    borderRadius: 12,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-    alignItems: "center",
-    marginHorizontal: 4,
-  },
+    tabs: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginBottom: 20,
+    },
 
-  activeTab: {
-    backgroundColor: "#3D8B55",
-  },
+    tab: {
+      flex: 1,
+      height: 44,
+      borderRadius: 12,
+      backgroundColor: theme.card,
+      justifyContent: "center",
+      alignItems: "center",
+      marginHorizontal: 4,
+    },
 
-  tabText: {
-    color: "#666",
-    fontWeight: "600",
-  },
+    activeTab: {
+      backgroundColor: theme.primary,
+    },
 
-  activeTabText: {
-    color: "#fff",
-  },
-});
+    tabText: {
+      color: theme.textSecondary,
+      fontWeight: "600",
+    },
+
+    activeTabText: {
+      color: "#fff",
+    },
+  });

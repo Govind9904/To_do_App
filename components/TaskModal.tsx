@@ -1,3 +1,4 @@
+import { useTheme } from "@/context/ThemeContext";
 import { Task } from "@/types/task";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -37,6 +38,9 @@ export default function TaskModal({ visible, onClose, onSubmitTask, task, mode }
   const [date, setDate] = useState(new Date());
   const [showDate, setShowDate] = useState(false);
   const [priority, setPriority] = useState<"High" | "Medium" | "Low">("Medium");
+
+
+  console.log("Mode",mode)
 
   const resetForm = () => {
     setTitle("");
@@ -80,6 +84,9 @@ export default function TaskModal({ visible, onClose, onSubmitTask, task, mode }
     onClose();
   };
 
+  const { theme } = useTheme();
+  const styles = getStyle(theme);
+
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.wrapper}>
@@ -96,7 +103,7 @@ export default function TaskModal({ visible, onClose, onSubmitTask, task, mode }
                   : "Task Details"}
             </Text>
             <TouchableOpacity onPress={handleClose}>
-              <Ionicons name="close" size={26} color="#444" />
+              <Ionicons name="close" size={26} color={theme.text} />
             </TouchableOpacity>
           </View>
 
@@ -108,6 +115,7 @@ export default function TaskModal({ visible, onClose, onSubmitTask, task, mode }
             placeholder="Enter title"
             editable={mode !== "view"}
             style={styles.input}
+            placeholderTextColor={theme.text}
           />
 
           {/* Description */}
@@ -119,6 +127,7 @@ export default function TaskModal({ visible, onClose, onSubmitTask, task, mode }
             editable={mode !== "view"}
             style={[styles.input, { height: 80 }]}
             multiline
+            placeholderTextColor={theme.text}
           />
 
           {/* Category */}
@@ -129,6 +138,7 @@ export default function TaskModal({ visible, onClose, onSubmitTask, task, mode }
             placeholder="Study / Work / Personal"
             editable={mode !== "view"}
             style={styles.input}
+            placeholderTextColor={theme.text}
           />
 
           {/* Due Date */}
@@ -203,11 +213,12 @@ export default function TaskModal({ visible, onClose, onSubmitTask, task, mode }
   );
 }
 
-const styles = StyleSheet.create({
+const getStyle = (theme : any) =>
+StyleSheet.create({
   wrapper: { flex: 1, justifyContent: "flex-end" },
   overlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.35)" },
   sheet: {
-    backgroundColor: "#fff",
+    backgroundColor: theme.card,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     padding: 22,
@@ -217,30 +228,32 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 20,
   },
-  heading: { fontSize: 20, fontWeight: "700" },
-  label: { marginTop: 10, fontWeight: "600" },
+  heading: { fontSize: 20, fontWeight: "700", color:theme.text },
+  label: { marginTop: 10, fontWeight: "600",color:theme.text },
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: theme.border,
     padding: 12,
     borderRadius: 10,
     marginTop: 5,
+    backgroundColor:theme.input,
+    color:theme.text
   },
   priorityRow: { flexDirection: "row", marginTop: 10 },
   priorityButton: {
     flex: 1,
     padding: 10,
     margin: 4,
-    backgroundColor: "#eee",
+    backgroundColor: theme.border,
     borderRadius: 8,
     alignItems: "center",
   },
   activePriority: { backgroundColor: "#3D8B55" },
-  priorityText: { color: "#333" },
+  priorityText: { color:theme.text },
   activePriorityText: { color: "#fff" },
   button: {
     marginTop: 20,
-    backgroundColor: "#3D8B55",
+    backgroundColor: theme.primary,
     padding: 15,
     borderRadius: 12,
     alignItems: "center",

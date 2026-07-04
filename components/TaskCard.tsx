@@ -1,4 +1,5 @@
 
+import { useTheme } from "@/context/ThemeContext";
 import { Task } from "@/types/task";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
@@ -21,8 +22,13 @@ const formatDate = (date?: string) => {
   });
 };
 
+
+
 export default function TaskCard({ task, onToggle, onDelete, onEdit , showTaskDetail }: Props) {
   // const { taskList, fetchTasks, createTask,updateTask, loading, status, error } =useTask();
+
+const { theme } = useTheme();
+const styles = getStyle(theme);
   const RightActions = () => {
     return (
       <View style={styles.rightActions}>
@@ -141,9 +147,10 @@ export default function TaskCard({ task, onToggle, onDelete, onEdit , showTaskDe
   );
 }
 
-const styles = StyleSheet.create({
+const getStyle = (theme : any) =>
+StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: theme.card,
     borderRadius: 18,
     padding: 16,
     marginBottom: 15,
@@ -177,12 +184,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 17,
     fontWeight: "700",
-    color: "#222",
+    color: theme.text,
   },
 
   completedTitle: {
     textDecorationLine: "line-through",
-    color: "#888",
+    color: theme.textSecondary,
   },
 
   dateRow: {
@@ -193,7 +200,7 @@ const styles = StyleSheet.create({
 
   date: {
     marginLeft: 5,
-    color: "#888",
+    color: theme.textSecondary,
     fontSize: 13,
   },
 
@@ -226,10 +233,10 @@ const styles = StyleSheet.create({
   },
 
   editButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: theme.primary,
   },
 
   deleteButton: {
-    backgroundColor: "#E53935",
+    backgroundColor: theme.danger,
   },
 });

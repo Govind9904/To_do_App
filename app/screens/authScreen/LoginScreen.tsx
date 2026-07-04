@@ -1,4 +1,5 @@
 import { loginUser } from "@/api/authApi";
+import { useTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
@@ -22,6 +23,9 @@ export default function LoginScreen({ navigation }: any) {
   const [loading, setLoading] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
+
+  const { theme } = useTheme();
+  const styles = getStyle(theme);
 
   const handleLogin = async () => {
     if (!email.trim()) {
@@ -77,6 +81,7 @@ export default function LoginScreen({ navigation }: any) {
           autoCapitalize="none"
           onChangeText={setEmail}
           style={styles.input}
+          placeholderTextColor={theme.text}
         />
 
         <Text style={styles.label}>Password</Text>
@@ -88,6 +93,7 @@ export default function LoginScreen({ navigation }: any) {
             value={password}
             onChangeText={setPassword}
             style={styles.passwordInput}
+            placeholderTextColor={theme.text}
           />
 
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
@@ -127,10 +133,11 @@ export default function LoginScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyle = (theme : any) =>
+  StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F7F8F3",
+    backgroundColor: theme.background,
     paddingHorizontal: 24,
     justifyContent: "center",
   },
@@ -153,17 +160,17 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 34,
     fontWeight: "700",
-    color: "#1F5E46",
+    color: theme.secondary,
   },
 
   subtitle: {
-    color: "#777",
+    color: theme.textSecondary,
     marginTop: 8,
     fontSize: 15,
   },
 
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: theme.card,
     borderRadius: 20,
     padding: 22,
 
@@ -175,7 +182,7 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    color: "#555",
+    color: theme.text,
     marginBottom: 8,
     fontWeight: "600",
   },
@@ -183,17 +190,19 @@ const styles = StyleSheet.create({
   input: {
     height: 55,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: theme.border,
     borderRadius: 14,
     paddingHorizontal: 15,
     marginBottom: 20,
+    backgroundColor:theme.input,
+    color:theme.text
   },
 
   passwordContainer: {
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: theme.border,
     borderRadius: 14,
     paddingHorizontal: 15,
     marginBottom: 8,
@@ -202,6 +211,7 @@ const styles = StyleSheet.create({
   passwordInput: {
     flex: 1,
     height: 55,
+    color:theme.text
   },
 
   forgot: {

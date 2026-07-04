@@ -1,6 +1,7 @@
 import { updateTask } from "@/api/taskApi";
 import AddTaskButton from "@/components/AddTaskButton";
 import { useTask } from "@/context/TaskContext";
+import { useTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
@@ -16,7 +17,7 @@ import TaskModal, { TaskPayload } from "../../components/TaskModal";
 
 export default function Home() {
   const { taskList, fetchTasks, createTask, loading, status, error } =useTask();
-
+  const [mode, setMode] = useState<"create" | "edit" | "view">("create");
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
@@ -24,6 +25,9 @@ export default function Home() {
   }, []);
 
   const today = new Date();
+
+  const { theme } = useTheme();
+  const styles = getStyles(theme);
 
   const formattedDate = today.toLocaleDateString("en-GB", {
     day: "numeric",
@@ -186,6 +190,7 @@ export default function Home() {
       {/* MODAL */}
       <TaskModal
         visible={modalVisible}
+        mode={mode}
         onClose={() => setModalVisible(false)}
         onAddTask={async (task: TaskPayload) => {
           // ✅ create task in backend
@@ -202,151 +207,154 @@ export default function Home() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F7F8F3",
-    paddingHorizontal: 18,
-  },
 
-  content: {
-    flex: 1,
-  },
+const getStyles = (theme: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+      paddingHorizontal: 18,
+    },
 
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10,
-    alignItems: "center",
-  },
+    content: {
+      flex: 1,
+    },
 
-  greeting: {
-    fontSize: 14,
-    color: "#777",
-  },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginTop: 10,
+      alignItems: "center",
+    },
 
-  name: {
-    fontSize: 26,
-    fontWeight: "700",
-    color: "#1F5E46",
-  },
+    greeting: {
+      fontSize: 14,
+      color: theme.textSecondary,
+    },
 
-  date: {
-    marginTop: 4,
-    color: "#666",
-    fontSize: 13,
-  },
+    name: {
+      fontSize: 26,
+      fontWeight: "700",
+      color: theme.secondary,
+    },
 
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-  },
+    date: {
+      marginTop: 4,
+      color: theme.textSecondary,
+      fontSize: 13,
+    },
 
-  cardRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginVertical: 20,
-  },
+    avatar: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+    },
 
-  card: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingVertical: 14,
-    marginHorizontal: 4,
-    borderRadius: 14,
-    alignItems: "center",
-    elevation: 2,
-  },
+    cardRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginVertical: 20,
+    },
 
-  cardValue: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#1F5E46",
-  },
+    card: {
+      flex: 1,
+      backgroundColor: theme.card,
+      paddingVertical: 14,
+      marginHorizontal: 4,
+      borderRadius: 14,
+      alignItems: "center",
+      elevation: 2,
+    },
 
-  cardTitle: {
-    fontSize: 12,
-    color: "#777",
-    marginTop: 2,
-  },
+    cardValue: {
+      fontSize: 20,
+      fontWeight: "700",
+      color: theme.primary,
+    },
 
-  progressCard: {
-    backgroundColor: "#fff",
-    padding: 14,
-    borderRadius: 14,
-    marginBottom: 14,
-    elevation: 1,
-  },
+    cardTitle: {
+      fontSize: 12,
+      color: theme.textSecondary,
+      marginTop: 2,
+    },
 
-  progressText: {
-    marginBottom: 8,
-    fontWeight: "600",
-    fontSize: 13,
-  },
+    progressCard: {
+      backgroundColor: theme.card,
+      padding: 14,
+      borderRadius: 14,
+      marginBottom: 14,
+      elevation: 1,
+    },
 
-  progressBar: {
-    height: 8,
-    backgroundColor: "#eee",
-    borderRadius: 10,
-    overflow: "hidden",
-  },
+    progressText: {
+      marginBottom: 8,
+      fontWeight: "600",
+      fontSize: 13,
+      color: theme.text,
+    },
 
-  progressFill: {
-    height: "100%",
-    backgroundColor: "#3D8B55",
-    borderRadius: 10,
-  },
+    progressBar: {
+      height: 8,
+      backgroundColor: theme.border,
+      borderRadius: 10,
+      overflow: "hidden",
+    },
 
-  taskContainer: {
-    flex: 1,
-    backgroundColor: "#fff",
-    borderRadius: 14,
-    padding: 14,
-  },
+    progressFill: {
+      height: "100%",
+      backgroundColor: theme.primary,
+      borderRadius: 10,
+    },
 
-  sectionTitle: {
-    fontSize: 17,
-    fontWeight: "700",
-    marginBottom: 10,
-    color: "#222",
-  },
+    taskContainer: {
+      flex: 1,
+      backgroundColor: theme.card,
+      borderRadius: 14,
+      padding: 14,
+    },
 
-  taskItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
-  },
+    sectionTitle: {
+      fontSize: 17,
+      fontWeight: "700",
+      marginBottom: 10,
+      color: theme.text,
+    },
 
-  taskTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#222",
-  },
+    taskItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+    },
 
-  taskMeta: {
-    fontSize: 12,
-    color: "#777",
-    marginTop: 2,
-  },
+    taskTitle: {
+      fontSize: 14,
+      fontWeight: "600",
+      color: theme.text,
+    },
 
-  completed: {
-    textDecorationLine: "line-through",
-    color: "#999",
-  },
+    taskMeta: {
+      fontSize: 12,
+      color: theme.textSecondary,
+      marginTop: 2,
+    },
 
-  priorityBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    marginLeft: 8,
-  },
+    completed: {
+      textDecorationLine: "line-through",
+      color: theme.textSecondary,
+    },
 
-  priorityText: {
-    color: "#fff",
-    fontSize: 10,
-    fontWeight: "600",
-  },
-});
+    priorityBadge: {
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 6,
+      marginLeft: 8,
+    },
+
+    priorityText: {
+      color: "#fff",
+      fontSize: 10,
+      fontWeight: "600",
+    },
+  });

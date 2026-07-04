@@ -1,4 +1,5 @@
 import { useTask } from "@/context/TaskContext";
+import { useTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
@@ -13,13 +14,16 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Profile() {
-  const [darkMode, setDarkMode] = React.useState(false);
+  const { darkMode, toggleTheme } = useTheme();
 
   const { taskList } = useTask();
 
   const totalTask = taskList.length;
   const completedTask = taskList.filter((task) => task.completed).length;
   const pendingTask = totalTask - completedTask;
+
+  const { theme } = useTheme();
+  const styles = getStyles(theme);
 
   const MenuItem = ({
     icon,
@@ -89,7 +93,7 @@ export default function Profile() {
         <MenuItem
           icon="moon-outline"
           title="Dark Mode"
-          right={<Switch value={darkMode} onValueChange={setDarkMode} />}
+          right={<Switch value={darkMode} onValueChange={toggleTheme}/>}
         />
 
         <MenuItem icon="notifications-outline" title="Notifications" />
@@ -109,15 +113,15 @@ export default function Profile() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme : any) =>StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F7F8F3",
+    backgroundColor:theme.background,
     paddingHorizontal: 18,
   },
 
   profileCard: {
-    backgroundColor: "#3D8B55",
+    backgroundColor:theme.primary,
     borderRadius: 25,
     alignItems: "center",
     paddingVertical: 30,
@@ -153,7 +157,7 @@ const styles = StyleSheet.create({
 
   statCard: {
     width: "31%",
-    backgroundColor: "#fff",
+    backgroundColor:theme.card,
     borderRadius: 16,
     paddingVertical: 18,
     alignItems: "center",
@@ -163,16 +167,16 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 26,
     fontWeight: "700",
-    color: "#3D8B55",
+    color:theme.primary,
   },
 
   statTitle: {
-    color: "#777",
+    color:theme.textSecondary,
     marginTop: 6,
   },
 
   section: {
-    backgroundColor: "#fff",
+    backgroundColor:theme.card,
     borderRadius: 20,
     padding: 15,
   },
@@ -181,7 +185,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     marginBottom: 15,
-    color: "#333",
+    color:theme.text,
   },
 
   menuItem: {
@@ -190,7 +194,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: "#F1F1F1",
+    borderBottomColor: theme.border,
   },
 
   left: {
@@ -215,7 +219,7 @@ const styles = StyleSheet.create({
 
   logout: {
     marginVertical: 25,
-    backgroundColor: "#E53935",
+    backgroundColor: theme.danger,
     height: 55,
     borderRadius: 15,
     justifyContent: "center",
