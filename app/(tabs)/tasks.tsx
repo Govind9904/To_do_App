@@ -18,7 +18,14 @@ import TaskCard from "../../components/TaskCard";
 import TaskModal from "../../components/TaskModal";
 
 export default function Tasks() {
-  const { taskList, fetchTasks, createTask, updateTask, deleteTask, searchTask } = useTask();
+  const {
+    taskList,
+    fetchTasks,
+    createTask,
+    updateTask,
+    deleteTask,
+    searchTask,
+  } = useTask();
 
   const [mode, setMode] = useState<"create" | "edit" | "view">("create");
   const [search, setSearch] = useState("");
@@ -27,12 +34,11 @@ export default function Tasks() {
 
   const [modalVisible, setModalVisible] = useState(false);
 
-
   const { theme } = useTheme();
   const styles = getStyle(theme);
 
   const handleDelete = async (id: any) => {
-    console.log("Delete Id :-", id)
+    // console.log("Delete Id :-", id)
     await deleteTask(id);
     await fetchTasks();
   };
@@ -42,21 +48,21 @@ export default function Tasks() {
     setMode("edit");
     setSelectedTask(task);
     setModalVisible(true);
-    console.log("Edit Id :-", id)
+    // console.log("Edit Id :-", id)
   };
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      console.log("API Calling")
+      // console.log("API Calling")
       searchTask(search, filter);
     }, 400);
 
     return () => clearTimeout(timer);
   }, [search, filter]);
 
-  console.log("TASK IN TASKS TAB :-",taskList)
+  // console.log("TASK IN TASKS TAB :-",taskList)
   const toggleTask = async (id: string, task: any) => {
-    console.log("Toggle");
+    // console.log("Toggle");
 
     await updateTask(id, {
       ...task,
@@ -206,7 +212,7 @@ const getStyle = (theme: any) =>
       flex: 1,
       marginLeft: 10,
       fontSize: 16,
-      color: theme.text
+      color: theme.text,
     },
 
     tabs: {
@@ -237,7 +243,7 @@ const getStyle = (theme: any) =>
     activeTabText: {
       color: "#fff",
     },
-    
+
     taskMeta: {
       fontSize: 12,
       color: theme.textSecondary,

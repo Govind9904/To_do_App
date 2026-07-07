@@ -1,4 +1,12 @@
-import { addTask, deleteTask as deleteTaskApi, getTasks, searchTasks, updateTask as updateTaskApi } from "@/api/taskApi";
+import {
+  addTask,
+  deleteTask as deleteTaskApi,
+  getTasks,
+  searchTasks,
+  updateTask as updateTaskApi,
+} from "@/api/taskApi";
+import { scheduleTaskReminder } from "@/service/notification.service";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useContext, useState } from "react";
 import { Task } from "../types/task";
 
@@ -19,7 +27,7 @@ type TaskContentType = {
   deleteTask: (id: string) => Promise<void>;
   searchTask: (
     search: string,
-    filter: "All" | "Pending" | "Completed"
+    filter: "All" | "Pending" | "Completed",
   ) => Promise<void>;
   loading: boolean;
   status: "idle" | "success" | "error";
@@ -44,7 +52,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
 
       const response = await getTasks();
 
-      console.log("Response in Get Task Api",response)
+      // console.log("Response in Get Task Api", response);
 
       setTaskList(response);
       setStatus("success");
@@ -63,11 +71,12 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       setError(null);
 
-      const response = await addTask(task);
-      const newTask = response.data;
+      await addTask(task);
 
-      // ⚡ instant UI update (no extra fetch needed)
-      setTaskList((prev) => [newTask, ...prev]);
+      const enabled = await AsyncStorage.getItem("notificationsEnabled");
+      if (enabled === "true") {
+        await scheduleTaskReminder(task);
+      }
 
       setStatus("success");
     } catch (err: any) {
@@ -78,26 +87,24 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updateTask = async (id: string , data: Partial<Task>) => {
+  const updateTask = async (id: string, data: Partial<Task>) => {
     try {
       setLoading(true);
 
-      const updatedTask = await updateTaskApi(id,data);
+      const updatedTask = await updateTaskApi(id, data);
 
-      setTaskList((prev)=>
-        prev.map((task)=>
-        task._id === id ? updatedTask : task
-        )
+      setTaskList((prev) =>
+        prev.map((task) => (task._id === id ? updatedTask : task)),
       );
       setLoading(false);
-    }catch(err:any){
-      console.log("Update Error Task :-",err);
+    } catch (err: any) {
+      console.log("Update Error Task :-", err);
       setStatus("error");
       setError(err?.message || "Failed to Update Task");
-    }finally{
+    } finally {
       setLoading(false);
     }
-  }
+  };
 
   const deleteTask = async (id: string) => {
     try {
@@ -111,11 +118,12 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }; 
+  };
 
   const searchTask = async (
     search: string,
-    filter: "All" | "Pending" | "Completed") => {
+    filter: "All" | "Pending" | "Completed",
+  ) => {
     try {
       let completed: boolean | undefined;
 
@@ -123,7 +131,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
       if (filter === "Completed") completed = true;
 
       const response = await searchTasks(search, completed);
-      console.log("Full Response",response)
+      // console.log("Full Response", response);
       setTaskList(response.data);
     } catch (error) {
       console.log(error);

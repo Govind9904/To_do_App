@@ -29,7 +29,13 @@ type Props = {
   mode: "create" | "edit" | "view";
 };
 
-export default function TaskModal({ visible, onClose, onSubmitTask, task, mode }: Props) {
+export default function TaskModal({
+  visible,
+  onClose,
+  onSubmitTask,
+  task,
+  mode,
+}: Props) {
   // ✅ FIXED: missing states added
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -39,8 +45,7 @@ export default function TaskModal({ visible, onClose, onSubmitTask, task, mode }
   const [showDate, setShowDate] = useState(false);
   const [priority, setPriority] = useState<"High" | "Medium" | "Low">("Medium");
 
-
-  console.log("Mode",mode)
+  // console.log("Mode",mode)
 
   const resetForm = () => {
     setTitle("");
@@ -189,21 +194,13 @@ export default function TaskModal({ visible, onClose, onSubmitTask, task, mode }
 
           {/* Submit */}
           {mode === "view" ? (
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleClose}
-            >
+            <TouchableOpacity style={styles.button} onPress={handleClose}>
               <Text style={styles.buttonText}>Close</Text>
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleSubmit}
-            >
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
               <Text style={styles.buttonText}>
-                {mode === "edit"
-                  ? "Update Task"
-                  : "Create Task"}
+                {mode === "edit" ? "Update Task" : "Create Task"}
               </Text>
             </TouchableOpacity>
           )}
@@ -213,50 +210,50 @@ export default function TaskModal({ visible, onClose, onSubmitTask, task, mode }
   );
 }
 
-const getStyle = (theme : any) =>
-StyleSheet.create({
-  wrapper: { flex: 1, justifyContent: "flex-end" },
-  overlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.35)" },
-  sheet: {
-    backgroundColor: theme.card,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    padding: 22,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
-  },
-  heading: { fontSize: 20, fontWeight: "700", color:theme.text },
-  label: { marginTop: 10, fontWeight: "600",color:theme.text },
-  input: {
-    borderWidth: 1,
-    borderColor: theme.border,
-    padding: 12,
-    borderRadius: 10,
-    marginTop: 5,
-    backgroundColor:theme.input,
-    color:theme.text
-  },
-  priorityRow: { flexDirection: "row", marginTop: 10 },
-  priorityButton: {
-    flex: 1,
-    padding: 10,
-    margin: 4,
-    backgroundColor: theme.border,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  activePriority: { backgroundColor: "#3D8B55" },
-  priorityText: { color:theme.text },
-  activePriorityText: { color: "#fff" },
-  button: {
-    marginTop: 20,
-    backgroundColor: theme.primary,
-    padding: 15,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  buttonText: { color: "#fff", fontWeight: "700" },
-});
+const getStyle = (theme: any) =>
+  StyleSheet.create({
+    wrapper: { flex: 1, justifyContent: "flex-end" },
+    overlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.35)" },
+    sheet: {
+      backgroundColor: theme.card,
+      borderTopLeftRadius: 28,
+      borderTopRightRadius: 28,
+      padding: 22,
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginBottom: 20,
+    },
+    heading: { fontSize: 20, fontWeight: "700", color: theme.text },
+    label: { marginTop: 10, fontWeight: "600", color: theme.text },
+    input: {
+      borderWidth: 1,
+      borderColor: theme.border,
+      padding: 12,
+      borderRadius: 10,
+      marginTop: 5,
+      backgroundColor: theme.input,
+      color: theme.text,
+    },
+    priorityRow: { flexDirection: "row", marginTop: 10 },
+    priorityButton: {
+      flex: 1,
+      padding: 10,
+      margin: 4,
+      backgroundColor: theme.border,
+      borderRadius: 8,
+      alignItems: "center",
+    },
+    activePriority: { backgroundColor: "#3D8B55" },
+    priorityText: { color: theme.text },
+    activePriorityText: { color: "#fff" },
+    button: {
+      marginTop: 20,
+      backgroundColor: theme.primary,
+      padding: 15,
+      borderRadius: 12,
+      alignItems: "center",
+    },
+    buttonText: { color: "#fff", fontWeight: "700" },
+  });

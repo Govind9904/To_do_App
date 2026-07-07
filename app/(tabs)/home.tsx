@@ -16,7 +16,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import TaskModal from "../../components/TaskModal";
 
 export default function Home() {
-  const { taskList, fetchTasks, createTask, loading, status, error } =useTask();
+  const { taskList, fetchTasks, createTask, loading, status, error } =
+    useTask();
   const [mode, setMode] = useState<"create" | "edit" | "view">("create");
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -36,7 +37,7 @@ export default function Home() {
     weekday: "long",
   });
 
-  console.log("TASK LIST", taskList)
+  // console.log("TASK LIST", taskList)
 
   const totalTask = taskList.length;
   const completedTask = taskList.filter((t) => t?.completed).length;
@@ -129,9 +130,7 @@ export default function Home() {
           <View style={styles.progressHeader}>
             <Text style={styles.progressTitle}>Progress</Text>
 
-            <Text style={styles.progressText}>
-              {progressRate}% Completed
-            </Text>
+            <Text style={styles.progressText}>{progressRate}% Completed</Text>
           </View>
 
           <View style={styles.progressBar}>
@@ -205,14 +204,13 @@ export default function Home() {
         onClose={() => setModalVisible(false)}
         onSubmitTask={async (task) => {
           await createTask(task);
-          await fetchTasks();   // IMPORTANT await
+          await fetchTasks(); // IMPORTANT await
           setModalVisible(false);
         }}
       />
     </SafeAreaView>
   );
 }
-
 
 const getStyles = (theme: any) =>
   StyleSheet.create({
@@ -283,7 +281,7 @@ const getStyles = (theme: any) =>
       fontWeight: "600",
       color: theme.textSecondary,
     },
-    
+
     taskContainer: {
       flex: 1,
       backgroundColor: theme.card,
@@ -336,11 +334,11 @@ const getStyles = (theme: any) =>
       fontWeight: "600",
     },
 
-    flex:{
+    flex: {
       display: "flex",
       flexDirection: "row",
       justifyContent: "space-between",
-      alignItems: 'center'
+      alignItems: "center",
     },
 
     progressCard: {
